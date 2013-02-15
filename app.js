@@ -1,0 +1,1 @@
+var angularHammerApp = angular.module('angularHammerApp', ['hmTouchevents']);

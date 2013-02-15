@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-gb" ng-app="angularHammerApp" id="ng-app">
+<head>
+  <meta charset="utf-8">
+  <title>Angular Hammer v2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="//necolas.github.com/normalize.css/2.0.1/normalize.css">
+  <style>
+    body {
+      margin: 8px auto;
+      max-width: 90%;
+      width: 480px;
+      background: #222;
+      color: #ffce00;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-weight: normal;
+      font-size: 30px;
+    }
+    p {
+      margin-top: 80px;
+      text-align: center;
+      font-size: 30px;
+      line-height: 1;
+    }
+    a {
+      color: #00b0ff;
+      text-decoration: none;
+      -webkit-transition: all 250ms ease-in-out;
+         -moz-transition: all 250ms ease-in-out;
+          -ms-transition: all 250ms ease-in-out;
+           -o-transition: all 250ms ease-in-out;
+              transition: all 250ms ease-in-out;
+    }
+    a:hover,
+    a:focus,
+    a:active {
+      color: #008ccc;
+      -webkit-transition: none;
+         -moz-transition: none;
+          -ms-transition: none;
+           -o-transition: none;
+              transition: none;
+    }
+    #touchme {
+      position: relative;
+      float: left;
+      margin-bottom: 55px;
+      width: 100%;
+      height: 200px;
+      background-color: #000;
+    }
+    #callout {
+      position: absolute;
+      bottom: -35px;
+      left: 0;
+      padding: 4px 10px;
+      background-color: #ffce00;
+      color: #000;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    #callout:after {
+      position: absolute;
+      top: -20px;
+      left: 120px;
+      width: 0;
+      height: 0;
+      border-right: 20px solid transparent;
+      border-bottom: 20px solid #ffce00;
+      border-left: 20px solid transparent;
+      content: '';
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Angular Hammer v2</h1>
+
+  <div id="touchme" hm-tap="callout='Ooh! You just tapped me.'" hm-doubletap="callout='Ooh! You just tapped me. Twice.'" hm-drag="callout='Ooh! You just dragged me.'" hm-swipe="callout='Ooh! You just swiped me.'" hm-transform="callout='Ooh! You just transformed me.'" hm-transform="callout='Ooh! You just transformed me.'" hm-rotate="callout='Ooh! You just rotated me.'" hm-rotate="callout='Ooh! You just pinched me.'">
+    <p>You can touch me…</p>
+    <span id="callout" ng-init="callout='Bust a few moves…'">{{callout}}</span>
+  </div>
+
+  <small>
+    <a href="https://github.com/monospaced/angular-hammer">https://github.com/monospaced/angular-hammer</a> <br>
+    <a href="http://monospaced.github.com/">Monospaced Labs</a>
+  </small>
+
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
+  <script src="hammer.js"></script>
+  <script src="angular-hammer.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
