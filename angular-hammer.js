@@ -49,17 +49,12 @@ angular.forEach(hmGestures, function(name){
   hmTouchevents.directive(directiveName, ['$parse', function($parse){
     return {
       restrict: 'A',
+      scope: true,
       link: function(scope, element, attr) {
-        var fn = $parse(attr[directiveName]),
-            opts = $parse(attr['hmOptions'])(scope, {}),
-            elm = element[0],
-            ngElm = angular.element(elm),
-            hammer = ngElm.data('hammer');
-        if (!hammer) {
-          hammer = Hammer(elm, opts);
-          ngElm.data('hammer', hammer);
-        }
-        hammer.on(eventName, function(event){
+          var fn = $parse(attr[directiveName]),
+            opts = $parse(attr['hmOptions'])(scope, {});
+        scope.hammer = scope.hammer || Hammer(element[0], opts);
+        scope.hammer.on(eventName, function(event){
           scope.$apply(function() {
             fn(scope, {$event: event});
           });
