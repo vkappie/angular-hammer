@@ -48,7 +48,6 @@ angular.forEach(hmGestures, function(name){
       eventName = directive[1];
   hmTouchevents.directive(directiveName, ['$parse', function($parse){
     return {
-      restrict: 'A',
       scope: true,
       link: function(scope, element, attr) {
           var fn = $parse(attr[directiveName]),
