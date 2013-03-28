@@ -14,13 +14,13 @@
  *
  *    hm-options="{drag: false, transform: false}"
  *
- * Include this file, and add `hmTouchevents` to your app's dependencies.
+ * Include this file, and add `hmTouchEvents` to your app's dependencies.
  *
  * Requires Hammer.js, tested with `v1.0.1 - 2013-02-26`.
  *
  */
 
-var hmTouchevents = angular.module('hmTouchevents', []),
+var hmTouchEvents = angular.module('hmTouchEvents', []),
     hmGestures = ['hmHold:hold',
                   'hmTap:tap',
                   'hmDoubletap:doubletap',
@@ -46,7 +46,7 @@ angular.forEach(hmGestures, function(name){
   var directive = name.split(':'),
       directiveName = directive[0],
       eventName = directive[1];
-  hmTouchevents.directive(directiveName, ['$parse', function($parse){
+  hmTouchEvents.directive(directiveName, ['$parse', function($parse){
     return function(scope, element, attr) {
       var fn = $parse(attr[directiveName]),
           opts = $parse(attr['hmOptions'])(scope, {}),
