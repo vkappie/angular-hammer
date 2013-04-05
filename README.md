@@ -16,3 +16,4 @@ You can change the default settings for the instance by adding a second attribut
 Include the angular-hammer.js file, and add `hmTouchEvents` to your app’s dependencies.
 
 Requires Hammer.js, tested with `v1.0.1 - 2013-02-26`.
+
