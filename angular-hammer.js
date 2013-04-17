@@ -1,5 +1,6 @@
 /*
  * Angular Hammer v2
+ * https://github.com/monospaced/angular-hammer
  *
  * Forked from https://github.com/randallb/angular-hammer
  * Updated to support https://github.com/EightMedia/hammer.js
@@ -18,7 +19,10 @@
  *
  * Requires Hammer.js, tested with `v1.0.1 - 2013-02-26`.
  *
+ * Monospaced Labs <scott@monospaced.com>
  */
+
+(function(){
 
 var hmTouchEvents = angular.module('hmTouchEvents', []),
     hmGestures = ['hmHold:hold',
@@ -63,3 +67,5 @@ angular.forEach(hmGestures, function(name){
     };
   }]);
 });
+
+})();
