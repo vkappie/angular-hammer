@@ -50,12 +50,10 @@ angular.forEach(hmGestures, function(name){
     return function(scope, element, attr) {
       var fn = $parse(attr[directiveName]),
           opts = $parse(attr['hmOptions'])(scope, {}),
-          elm = element[0],
-          ngElm = angular.element(elm),
-          hammer = ngElm.data('hammer');
+          hammer = element.data('hammer');
       if (!hammer) {
-        hammer = Hammer(elm, opts);
-        ngElm.data('hammer', hammer);
+        hammer = Hammer(element[0], opts);
+        element.data('hammer', hammer);
       }
       hammer.on(eventName, function(event){
         scope.$apply(function() {
