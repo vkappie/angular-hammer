@@ -9,6 +9,7 @@
 var hmTouchEvents = angular.module('hmTouchEvents', []),
     hmGestures = ['hmHold:hold',
                   'hmTap:tap',
+                  'hmPress:press',
                   'hmDoubletap:doubletap',
                   'hmDrag:drag',
                   'hmDragstart:dragstart',
