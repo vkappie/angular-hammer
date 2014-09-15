@@ -4,81 +4,217 @@
  * License: MIT
  */
 
-(function(window, angular, Hammer){
+(function (window, angular, Hammer) {
+  'use strict';
 
-var hmTouchEvents = angular.module('hmTouchEvents', []),
-    hmGestures = ['hmHold:hold',
-                  'hmTap:tap',
-                  'hmPress:press',
-                  'hmDoubletap:doubletap',
-                  'hmDrag:drag',
-                  'hmDragstart:dragstart',
-                  'hmDragend:dragend',
-                  'hmDragup:dragup',
-                  'hmDragdown:dragdown',
-                  'hmDragleft:dragleft',
-                  'hmDragright:dragright',
-                  'hmSwipe:swipe',
-                  'hmSwipeup:swipeup',
-                  'hmSwipedown:swipedown',
-                  'hmSwipeleft:swipeleft',
-                  'hmSwiperight:swiperight',
-                  'hmTransform:transform',
-                  'hmTransformstart:transformstart',
-                  'hmTransformend:transformend',
-                  'hmRotate:rotate',
-                  'hmPinch:pinch',
-                  'hmPinchin:pinchin',
-                  'hmPinchout:pinchout',
-                  'hmTouch:touch',
-                  'hmRelease:release'];
+  // ---- Default Hammer Directive Definitions ----
 
-angular.forEach(hmGestures, function(name){
-  var directive = name.split(':'),
-      directiveName = directive[0],
-      eventName = directive[1];
+  var gestureTypes = [
+    'hmmrPan:pan',
+    'hmmrPanStart:panstart',
+    'hmmrPanMove:panmove',
+    'hmmrPanEnd:panend',
+    'hmmrPanCancel:pancancel',
+    'hmmrPanLeft:panleft',
+    'hmmrPanRight:panright',
+    'hmmrPanUp:panup',
+    'hmmrPanDown:pandown',
+    'hmmrPinch:pinch',
+    'hmmrPinchStart:pinchstart',
+    'hmmrPinchMove:pinchmove',
+    'hmmrPinchEnd:pinchend',
+    'hmmrPinchCancel:pinchcancel',
+    'hmmrPinchIn:pinchin',
+    'hmmrPinchOut:pinchout',
+    'hmmrPress:press',
+    'hmmrRotate:rotate',
+    'hmmrRotateStart:rotatestart',
+    'hmmrRotateMove:rotatemove',
+    'hmmrRotateEnd:rotateend',
+    'hmmrRotateCancel:rotatecancel',
+    'hmmrSwipe:swipe',
+    'hmmrSwipeLeft:swipeleft',
+    'hmmrSwipeRight:swiperight',
+    'hmmrSwipeUp:swipeup',
+    'hmmrSwipeDown:swipedown',
+    'hmmrTap:tap'
+  ];
 
-  hmTouchEvents.directive(directiveName, ['$parse', '$window', function($parse, $window){
+  // ---- Module Definition ----
+
+  /**
+   * @ngInject
+   */
+  angular.module('hmmrTouchEvents', [])
+    .directive('hmmrCustom', hammerCustomDirective);
+
+  angular.forEach(gestureTypes, function (type) {
+    var directive = type.split(':'),
+        directiveName = directive[0],
+        eventName = directive[1];
+
+    /**
+     * @ngInject
+     */
+    angular.module('hmmrTouchEvents')
+      .directive(directiveName, function ($parse, $window) {
+        return {
+          'restrict' : 'A',
+          'link' : function (scope, element, attrs) {
+            var apply = scope.safeApply || scope.$apply,
+                expr = $parse(attrs[directiveName]),
+                handler = function (event) {
+                  apply(function () {
+                    expr(scope, {$event: event});
+                  });
+                },
+                opts = $parse(attrs.hmmrOptions)(scope, {}),
+                hammer = element.data('hammer');
+
+            if (!Hammer || !$window.addEventListener) {
+              if (directiveName === 'hmmrTap') {
+                element.bind('click', handler);
+              }
+
+              return;
+            }
+
+            if (!hammer) {
+              hammer = new Hammer(element[0], opts);
+              element.data('hammer', hammer);
+            }
+
+            hammer.on(eventName, handler);
+            scope.$on('$destroy', function () {
+              hammer.off(eventName, handler);
+            });
+          }
+        };
+      });
+  });
+
+  // ---- Hammer Custom Recognizer Directive Implementation ----
+
+  function hammerCustomDirective ($parse) {
     return {
-      restrict: 'A, C',
-      link: function(scope, element, attr) {
-        var expr = $parse(attr[directiveName]),
-            fn = function(event){
-              scope.$apply(function() {
-                expr(scope, {$event: event});
-              });
-            },
-            opts = $parse(attr['hmOptions'])(scope, {}),
-            hammer;
+      'restrict' : 'A',
+      'link' : function (scope, element, attrs) {
+        var apply = scope.safeApply || scope.$apply,
+            hammer = element.data('hammer'),
+            opts = $parse(attrs.hmmrOptions)(scope, {}),
+            recognizerString = attrs.hmmrCustom,
+            recognizerList = recognizerString.split('; ');
 
-        if (typeof Hammer === 'undefined' || !$window.addEventListener) {
-          // fallback to mouse events where appropriate
-          if (directiveName === 'hmTap') {
-            element.bind('click', fn);
-          }
-          if (directiveName === 'hmDoubletap') {
-            element.bind('dblclick', fn);
-          }
-          return;
-        }
-
-        // don't create multiple Hammer instances per element
-        if (!(hammer = element.data('hammer'))) {
-          hammer = Hammer(element[0], opts);
+        if (!hammer) {
+          hammer = Hammer.Manager(element[0], opts);
           element.data('hammer', hammer);
         }
 
-        // bind Hammer touch event
-        hammer.on(eventName, fn);
+        angular.forEach(recognizerList, function (paramString) {
+          var paramList = paramString.split(' '),
+              options = {},
+              expression,
+              handler,
+              recognizer;
 
-        // unbind Hammer touch event
-        scope.$on('$destroy', function(){
-          hammer.off(eventName, fn);
+          angular.forEach(paramList, function (param) {
+            var parameter = param.split(':'),
+                key = parameter[0],
+                value = parameter[1];
+
+            options[key] = parseParameterValue(key, value);
+          });
+
+          recognizer = hammer.get(options.event);
+
+          if (recognizer) {
+            recognizer.set(options);
+          } else {
+            addRecognizer(hammer, options);
+          }
+
+          if (options.recognizeWith) {
+            recognizer.recognizeWith(options.recognizeWith);
+          }
+
+          if (options.requireFailure) {
+            recognizer.requireFailure(options.requireFailure);
+          }
+
+          expression = $parse(options.expr);
+          handler = function (event) {
+            apply(function () {
+              expression(scope, {'$event' : event});
+            });
+          };
+
+          hammer.on(options.event, handler);
+          scope.$on('$destroy', function () {
+            hammer.off(options.event, handler);
+          });
         });
-
       }
     };
-  }]);
-});
+  }
 
+  // ---- Private Functions -----
+
+  function addRecognizer (manager, options) {
+    var recognizer;
+
+    if (options && options.type && options.event) {
+      if (options.type === 'pan') {
+        recognizer = new Hammer.Pan(options);
+      }
+
+      if (options.type === 'pinch') {
+        recognizer = new Hammer.Pinch(options);
+      }
+
+      if (options.type === 'press') {
+        recognizer = new Hammer.Press(options);
+      }
+
+      if (options.type === 'rotate') {
+        recognizer = new Hammer.Rotate(options);
+      }
+
+      if (options.type === 'swipe') {
+        recognizer = new Hammer.Swipe(options);
+      }
+
+      if (options.type === 'tap') {
+        recognizer = new Hammer.Tap(options);
+      }
+    }
+
+    if (manager && recognizer) {
+      manager.add(recognizer);
+    }
+  }
+
+  function parseParameterValue (key, value) {
+    if (key === 'direction') {
+      var directions = value.split('|'),
+          directionValue = 0;
+
+      angular.forEach(directions, function (direction) {
+        if (Hammer.hasOwnProperty(direction)) {
+          directionValue = directionValue | Hammer[direction];
+        }
+      });
+
+      return directionValue;
+    } else if (key === 'interval' || 
+               key === 'pointers' || 
+               key === 'posThreshold' ||
+               key === 'taps' || 
+               key === 'threshold' ||
+               key === 'time' ||
+               key === 'velocity') {
+      return +value;
+    } else {
+      return value;
+    }
+  }
 })(window, window.angular, window.Hammer);
