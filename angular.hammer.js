@@ -69,7 +69,7 @@
                 handler = scope[handlerName] ||
                           function (event) {
                             apply(function () {
-                              expr(scope, {$event: event});
+                              handlerExpr(scope, {$event: event});
                             });
                           },
                 opts = $parse(attrs.hmOptions)(scope, {}),
