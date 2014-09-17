@@ -1,6 +1,7 @@
-/*
- * angular-hammer v1.1.3
+/**
+ * angular-hammer v2.0.0
  * (c) 2013 Monospaced http://monospaced.com
+ * (c) 2014 Ryan S Mullins http://ryanmullins.org
  * License: MIT
  */
 
@@ -10,34 +11,35 @@
   // ---- Default Hammer Directive Definitions ----
 
   var gestureTypes = [
-    'hmmrPan:pan',
-    'hmmrPanStart:panstart',
-    'hmmrPanMove:panmove',
-    'hmmrPanEnd:panend',
-    'hmmrPanCancel:pancancel',
-    'hmmrPanLeft:panleft',
-    'hmmrPanRight:panright',
-    'hmmrPanUp:panup',
-    'hmmrPanDown:pandown',
-    'hmmrPinch:pinch',
-    'hmmrPinchStart:pinchstart',
-    'hmmrPinchMove:pinchmove',
-    'hmmrPinchEnd:pinchend',
-    'hmmrPinchCancel:pinchcancel',
-    'hmmrPinchIn:pinchin',
-    'hmmrPinchOut:pinchout',
-    'hmmrPress:press',
-    'hmmrRotate:rotate',
-    'hmmrRotateStart:rotatestart',
-    'hmmrRotateMove:rotatemove',
-    'hmmrRotateEnd:rotateend',
-    'hmmrRotateCancel:rotatecancel',
-    'hmmrSwipe:swipe',
-    'hmmrSwipeLeft:swipeleft',
-    'hmmrSwipeRight:swiperight',
-    'hmmrSwipeUp:swipeup',
-    'hmmrSwipeDown:swipedown',
-    'hmmrTap:tap'
+    'hmPan:pan',
+    'hmPanStart:panstart',
+    'hmPanMove:panmove',
+    'hmPanEnd:panend',
+    'hmPanCancel:pancancel',
+    'hmPanLeft:panleft',
+    'hmPanRight:panright',
+    'hmPanUp:panup',
+    'hmPanDown:pandown',
+    'hmPinch:pinch',
+    'hmPinchStart:pinchstart',
+    'hmPinchMove:pinchmove',
+    'hmPinchEnd:pinchend',
+    'hmPinchCancel:pinchcancel',
+    'hmPinchIn:pinchin',
+    'hmPinchOut:pinchout',
+    'hmPress:press',
+    'hmRotate:rotate',
+    'hmRotateStart:rotatestart',
+    'hmRotateMove:rotatemove',
+    'hmRotateEnd:rotateend',
+    'hmRotateCancel:rotatecancel',
+    'hmSwipe:swipe',
+    'hmSwipeLeft:swipeleft',
+    'hmSwipeRight:swiperight',
+    'hmSwipeUp:swipeup',
+    'hmSwipeDown:swipedown',
+    'hmTap:tap',
+    'hmDoubleTap:doubletap'
   ];
 
   // ---- Module Definition ----
@@ -45,8 +47,8 @@
   /**
    * @ngInject
    */
-  angular.module('hmmrTouchEvents', [])
-    .directive('hmmrCustom', hammerCustomDirective);
+  angular.module('hmTouchEvents', [])
+    .directive('hmCustom', hammerCustomDirective);
 
   angular.forEach(gestureTypes, function (type) {
     var directive = type.split(':'),
@@ -56,24 +58,30 @@
     /**
      * @ngInject
      */
-    angular.module('hmmrTouchEvents')
+    angular.module('hmTouchEvents')
       .directive(directiveName, function ($parse, $window) {
         return {
           'restrict' : 'A',
           'link' : function (scope, element, attrs) {
             var apply = scope.safeApply || scope.$apply,
-                expr = $parse(attrs[directiveName]),
-                handler = window[attrs[directiveName]] || function (event) {
-                  apply(function () {
-                    expr(scope, {$event: event});
-                  });
-                },
-                opts = $parse(attrs.hmmrOptions)(scope, {}),
+                handlerName = attrs[directiveName],
+                handlerExpr = $parse(handlerName),
+                handler = scope[handlerName] ||
+                          function (event) {
+                            apply(function () {
+                              expr(scope, {$event: event});
+                            });
+                          },
+                opts = $parse(attrs.hmOptions)(scope, {}),
                 hammer = element.data('hammer');
 
             if (!Hammer || !$window.addEventListener) {
-              if (directiveName === 'hmmrTap') {
+              if (directiveName === 'hmTap') {
                 element.bind('click', handler);
+              }
+
+              if (directiveName === 'hmDoubleTap') {
+                element.bind('dblclick', handler);
               }
 
               return;
@@ -101,23 +109,23 @@
       'link' : function (scope, element, attrs) {
         var apply = scope.safeApply || scope.$apply,
             hammer = element.data('hammer'),
-            opts = $parse(attrs.hmmrOptions)(scope, {}),
-            recognizerString = attrs.hmmrCustom,
-            recognizerList = recognizerString.split('; ');
+            opts = $parse(attrs.hmOptions)(scope, {}),
+            recognizerString = attrs.hmCustom,
+            recognizerList = recognizerString.split(';');
 
         if (!hammer) {
-          hammer = Hammer.Manager(element[0], opts);
+          hammer = new Hammer.Manager(element[0], opts);
           element.data('hammer', hammer);
         }
 
-        angular.forEach(recognizerList, function (paramString) {
-          var paramList = paramString.split(' '),
+        angular.forEach(recognizerList, function (optionsString) {
+          var optionsList = optionsString.split(' '),
               options = {},
               expression,
               handler,
               recognizer;
 
-          angular.forEach(paramList, function (param) {
+          angular.forEach(optionsList, function (param) {
             var parameter = param.split(':'),
                 key = parameter[0],
                 value = parameter[1];
@@ -142,11 +150,12 @@
           }
 
           expression = $parse(options.expr);
-          handler = function (event) {
-            apply(function () {
-              expression(scope, {'$event' : event});
-            });
-          };
+          handler = scope[options.expr] ||
+                    function (event) {
+                      apply(function () {
+                        expression(scope, {'$event' : event});
+                      });
+                    };
 
           hammer.on(options.event, handler);
           scope.$on('$destroy', function () {
