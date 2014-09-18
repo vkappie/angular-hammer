@@ -66,11 +66,14 @@
             var apply = scope.safeApply || scope.$apply,
                 handlerName = attrs[directiveName],
                 handlerExpr = $parse(handlerName),
-                handler = scope[handlerName] ||
-                          function (event) {
-                            apply(function () {
-                              handlerExpr(scope, {$event: event});
-                            });
+                handler = function (event) {
+                            if (scope[handlerName]) {
+                              scope[handlerName](event);
+                            } else {
+                              apply(function () {
+                                handlerExpr(scope, {$event: event});
+                              });
+                            }
                           },
                 opts = $parse(attrs.hmOptions)(scope, {}),
                 hammer = element.data('hammer');
@@ -150,12 +153,15 @@
           }
 
           expression = $parse(options.expr);
-          handler = scope[options.expr] ||
-                    function (event) {
-                      apply(function () {
-                        expression(scope, {'$event' : event});
-                      });
-                    };
+          handler = function (event) {
+            if (scope[options.expr]) {
+              scope[options.expr](event);
+            } else {
+              apply(function () {
+                expression(scope, {$event: event});
+              });
+            }
+          };
 
           hammer.on(options.event, handler);
           scope.$on('$destroy', function () {
