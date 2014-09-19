@@ -23,7 +23,7 @@
   <body>
     <div id="target"
       ng-controller="hmCtrl"
-      hm-custom="type:pan event:twoFingerPan pointers:2 direction:DIRECTION_ALL expr:onHammer; type:tap event:dbltap expr:onHammer pointers:2 taps:1">
+      hm-custom='[{"type":"pan", "event":"twoFingerPan", "pointers":2, "direction":"DIRECTION_ALL", "val":"onHammer"}, {"type":"tap", "event":"dbltap", "val":"onHammer", "pointers":2, "taps":1}]'>
         {{eventType}}
     </div>
     <script type="text/javascript" src="../bower_components/hammerjs/hammer.js"></script>

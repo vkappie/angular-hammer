@@ -1,7 +1,18 @@
 {
-  "name": "angular-hammer",
+  "name": "AngularHammer",
   "version": "2.0.0",
+  "authors" : [
+    "Ryan S Mullins <ryan@ryanmullins.org>"
+  ],
+  "homepage" : "https://github.com/RyanMullins/angular-hammer",
   "main": "angular.hammer.js",
+  "license" : "MIT",
+  "keywords" : [
+    "Angular",
+    "Hammer",
+    "touch",
+    "getsure"
+  ],
   "ignore": [
     "**/.*",
     "node_modules",

@@ -75,7 +75,7 @@
                               });
                             }
                           },
-                opts = $parse(attrs.hmOptions)(scope, {}),
+                opts = angular.fromJson(attrs.hmOptions),
                 hammer = element.data('hammer');
 
             if (!Hammer || !$window.addEventListener) {
@@ -112,29 +112,22 @@
       'link' : function (scope, element, attrs) {
         var apply = scope.safeApply || scope.$apply,
             hammer = element.data('hammer'),
-            opts = $parse(attrs.hmOptions)(scope, {}),
-            recognizerString = attrs.hmCustom,
-            recognizerList = recognizerString.split(';');
+            opts = angular.fromJson(attrs.hmOptions),
+            recognizerList = angular.fromJson(attrs.hmCustom);
 
         if (!hammer) {
           hammer = new Hammer.Manager(element[0], opts);
           element.data('hammer', hammer);
         }
 
-        angular.forEach(recognizerList, function (optionsString) {
-          var optionsList = optionsString.split(' '),
-              options = {},
-              expression,
+        angular.forEach(recognizerList, function (options) {
+          var expression,
               handler,
               recognizer;
 
-          angular.forEach(optionsList, function (param) {
-            var parameter = param.split(':'),
-                key = parameter[0],
-                value = parameter[1];
-
-            options[key] = parseParameterValue(key, value);
-          });
+          if (options.directions) {
+            options.directions = parseDirections(options.directions);
+          }
 
           recognizer = hammer.get(options.event);
 
@@ -152,10 +145,10 @@
             recognizer.requireFailure(options.requireFailure);
           }
 
-          expression = $parse(options.expr);
+          expression = $parse(options.val);
           handler = function (event) {
-            if (scope[options.expr]) {
-              scope[options.expr](event);
+            if (scope[options.val]) {
+              scope[options.val](event);
             } else {
               apply(function () {
                 expression(scope, {$event: event});
@@ -208,28 +201,15 @@
     }
   }
 
-  function parseParameterValue (key, value) {
-    if (key === 'direction') {
-      var directions = value.split('|'),
-          directionValue = 0;
+  function parseDirections (dirs) {
+    var directions = 0;
 
-      angular.forEach(directions, function (direction) {
-        if (Hammer.hasOwnProperty(direction)) {
-          directionValue = directionValue | Hammer[direction];
-        }
-      });
+    angular.forEach(dirs.split('|'), function (direction) {
+      if (Hammer.hasOwnProperty(direction)) {
+        directions = directions | Hammer[direction];
+      }
+    });
 
-      return directionValue;
-    } else if (key === 'interval' ||
-               key === 'pointers' ||
-               key === 'posThreshold' ||
-               key === 'taps' ||
-               key === 'threshold' ||
-               key === 'time' ||
-               key === 'velocity') {
-      return +value;
-    } else {
-      return value;
-    }
+    return directions;
   }
 })(window, window.angular, window.Hammer);
