@@ -7,7 +7,7 @@ An [Angular.js](https://angularjs.org/) module that enables you to bind custom b
 Install using the [Bower](http://bower.io/) package manager.
 
 ```bash
-$ bower install RyanMullins/AngularHammer
+$ bower install ryanmullins-angular-hammer
 ```
 
 Add `hmTouchEvents` to your app or module's dependencies. This module is designed to work with Angular.js v1.2.0+, and Hammer.js v2.0.0+. 
