@@ -1,10 +1,3 @@
-/**
- * angular-hammer v2.0.0
- * (c) 2013 Monospaced http://monospaced.com
- * (c) 2014 Ryan S Mullins http://ryanmullins.org
- * License: MIT
- */
-
 (function (window, angular, Hammer) {
   'use strict';
 
