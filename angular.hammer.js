@@ -63,16 +63,22 @@
         return {
           'restrict' : 'A',
           'link' : function (scope, element, attrs) {
-            var apply = scope.safeApply || scope.$apply,
-                handlerName = attrs[directiveName],
+            var handlerName = attrs[directiveName],
                 handlerExpr = $parse(handlerName),
                 handler = function (event) {
+                            var phase = scope.$root.$$phase,
+                                fn = function () {
+                                  handlerExpr(scope, {$event: event});
+                                };
+
                             if (scope[handlerName]) {
                               scope[handlerName](event);
                             } else {
-                              apply(function () {
-                                handlerExpr(scope, {$event: event});
-                              });
+                              if (phase === '$apply' || phase === '$digest') {
+                                fn();
+                              } else {
+                                scope.$apply(fn);
+                              }
                             }
                           },
                 opts = angular.fromJson(attrs.hmOptions),
@@ -147,12 +153,19 @@
 
           expression = $parse(options.val);
           handler = function (event) {
+            var phase = scope.$root.$$phase,
+                fn = function () {
+                  expression(scope, {$event: event});
+                };
+
             if (scope[options.val]) {
               scope[options.val](event);
             } else {
-              apply(function () {
-                expression(scope, {$event: event});
-              });
+              if (phase === '$apply' || phase === '$digest') {
+                fn();
+              } else {
+                scope.$apply(fn);
+              }
             }
           };
 

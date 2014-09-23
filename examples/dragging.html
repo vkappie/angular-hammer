@@ -47,18 +47,21 @@
               var x, y;
 
               scope.onHammer = function onHammer (event) {
-                if (!x) { x = event.center.x; }
-                if (!y) { y = event.center.y; }
+                console.log(event.target, element)
+                if (event.target === element[0].children[0]) {
+                  if (!x) { x = event.center.x; }
+                  if (!y) { y = event.center.y; }
 
-                scope.$apply(function () {
-                  x = event.center.x - 250;
-                  y = event.center.y - 250;
+                  scope.$apply(function () {
+                    x = event.center.x - 250;
+                    y = event.center.y - 250;
 
-                  element.css({
-                    'left' : x + 'px',
-                    'top' : y + 'px'
+                    element.css({
+                      'left' : x + 'px',
+                      'top' : y + 'px'
+                    });
                   });
-                });
+                }
               };
             }
           }
