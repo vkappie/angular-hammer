@@ -5,34 +5,34 @@
 
   var gestureTypes = [
     'hmPan:pan',
-    'hmPanStart:panstart',
-    'hmPanMove:panmove',
-    'hmPanEnd:panend',
-    'hmPanCancel:pancancel',
-    'hmPanLeft:panleft',
-    'hmPanRight:panright',
-    'hmPanUp:panup',
-    'hmPanDown:pandown',
+    'hmPanstart:panstart',
+    'hmPanmove:panmove',
+    'hmPanend:panend',
+    'hmPancancel:pancancel',
+    'hmPanleft:panleft',
+    'hmPanright:panright',
+    'hmPanup:panup',
+    'hmPandown:pandown',
     'hmPinch:pinch',
-    'hmPinchStart:pinchstart',
-    'hmPinchMove:pinchmove',
-    'hmPinchEnd:pinchend',
-    'hmPinchCancel:pinchcancel',
-    'hmPinchIn:pinchin',
-    'hmPinchOut:pinchout',
+    'hmPinchstart:pinchstart',
+    'hmPinchmove:pinchmove',
+    'hmPinchend:pinchend',
+    'hmPinchcancel:pinchcancel',
+    'hmPinchin:pinchin',
+    'hmPinchout:pinchout',
     'hmPress:press',
     'hmRotate:rotate',
-    'hmRotateStart:rotatestart',
-    'hmRotateMove:rotatemove',
-    'hmRotateEnd:rotateend',
-    'hmRotateCancel:rotatecancel',
+    'hmRotatestart:rotatestart',
+    'hmRotatemove:rotatemove',
+    'hmRotateend:rotateend',
+    'hmRotatecancel:rotatecancel',
     'hmSwipe:swipe',
-    'hmSwipeLeft:swipeleft',
-    'hmSwipeRight:swiperight',
-    'hmSwipeUp:swipeup',
-    'hmSwipeDown:swipedown',
+    'hmSwipeleft:swipeleft',
+    'hmSwiperight:swiperight',
+    'hmSwipeup:swipeup',
+    'hmSwipedown:swipedown',
     'hmTap:tap',
-    'hmDoubleTap:doubletap'
+    'hmDoubletap:doubletap'
   ];
 
   // ---- Module Definition ----
@@ -59,21 +59,21 @@
             var handlerName = attrs[directiveName],
                 handlerExpr = $parse(handlerName),
                 handler = function (event) {
-                            var phase = scope.$root.$$phase,
-                                fn = function () {
-                                  handlerExpr(scope, {$event: event});
-                                };
+                  var phase = scope.$root.$$phase,
+                      fn = function () {
+                        handlerExpr(scope, {$event: event});
+                      };
 
-                            if (scope[handlerName]) {
-                              scope[handlerName](event);
-                            } else {
-                              if (phase === '$apply' || phase === '$digest') {
-                                fn();
-                              } else {
-                                scope.$apply(fn);
-                              }
-                            }
-                          },
+                  if (scope[handlerName]) {
+                    scope[handlerName](event);
+                  } else {
+                    if (phase === '$apply' || phase === '$digest') {
+                      fn();
+                    } else {
+                      scope.$apply(fn);
+                    }
+                  }
+                },
                 opts = angular.fromJson(attrs.hmOptions),
                 hammer = element.data('hammer');
 
