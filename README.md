@@ -34,7 +34,7 @@ The `hmTouchEvents` module provides a series of attribute [directives](https://d
     - pinchout : hmPinchout
 * press : hmPress
 * rotate : hmRotate
-    - rotatestart : hmRoatetstart
+    - rotatestart : hmRotatestart
     - rotatemove : hmRotatemove
     - rotateend : hmRotateend
     - rotatecancel : hmRotatecancel
@@ -44,7 +44,7 @@ The `hmTouchEvents` module provides a series of attribute [directives](https://d
     - swipeup : hmSwipeup
     - swipedown : hmSwipedown
 * tap : hmTap
-* doubletap : hmDoubleTap 
+* doubletap : hmDoubletap 
 
 Behaviors to be executed on an event are defined as values of the attribute. The directives first try to resolve the value to a function available on the scope; if that function is found the event is passed to it, otherwise the value is parsed as an [Angular expression](https://docs.angularjs.org/guide/expression). Beware, invalid Angular expressions will cause an error. 
 
