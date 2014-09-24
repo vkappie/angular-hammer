@@ -42,12 +42,11 @@
         .directive('hmDir', function () {
           return {
             'restrict' : 'AE',
-            'template' : '<div id="target" hm-pan-move="onHammer">{{eventType}}</div>',
+            'template' : '<div id="target" hm-panmove="onHammer">{{eventType}}</div>',
             'link' : function (scope, element, attrs) {
               var x, y;
 
               scope.onHammer = function onHammer (event) {
-                console.log(event.target, element)
                 if (event.target === element[0].children[0]) {
                   if (!x) { x = event.center.x; }
                   if (!y) { y = event.center.y; }

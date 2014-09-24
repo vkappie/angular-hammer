@@ -17,32 +17,32 @@ Add `hmTouchEvents` to your app or module's dependencies. This module is designe
 The `hmTouchEvents` module provides a series of attribute [directives](https://docs.angularjs.org/guide/directive) for hooking into the standard Hammer.js events. The following list shows the Hammer event and corresponding Angular directive (format: &lt;eventName&gt; : &lt;directiveName&gt;). Events on the top level are fired every time a gesture of that class happens. The second-level events are more specific to the gesture state, but that interaction also triggers a top level event. 
 
 * pan : hmPan
-    - panstart : hmPanStart
-    - panmove : hmPanMove
-    - panend : hmPanEnd
-    - pancancel : hmPanCancel
-    - panleft : hmPanLeft
-    - panright : hmPanRight
-    - panup : hmPanUp
-    - pandown : hmPanDown
+    - panstart : hmPanstart
+    - panmove : hmPanmove
+    - panend : hmPanend
+    - pancancel : hmPancancel
+    - panleft : hmPanleft
+    - panright : hmPanright
+    - panup : hmPanup
+    - pandown : hmPandown
 * pinch : hmPinch
-    - pinchstart : hmPinchStart
-    - pinchmove : hmPinchMove
-    - pinchend : hmPinchEnd
-    - pinchcancel : hmPinchCancel
-    - pinchin : hmPinchIn
-    - pinchout : hmPinchOut
+    - pinchstart : hmPinchstart
+    - pinchmove : hmPinchmove
+    - pinchend : hmPinchend
+    - pinchcancel : hmPinchcancel
+    - pinchin : hmPinchin
+    - pinchout : hmPinchout
 * press : hmPress
 * rotate : hmRotate
-    - rotatestart : hmRoatetStart
-    - rotatemove : hmRotateMove
-    - rotateend : hmRotateEnd
-    - rotatecancel : hmRotateCancel
+    - rotatestart : hmRoatetstart
+    - rotatemove : hmRotatemove
+    - rotateend : hmRotateend
+    - rotatecancel : hmRotatecancel
 * swipe : hmSwipe
-    - swipeleft : hmSwipeLeft
-    - swiperight : hmSwipeRight
-    - swipeup : hmSwipeUp
-    - swipedown : hmSwipeDown
+    - swipeleft : hmSwipeleft
+    - swiperight : hmSwiperight
+    - swipeup : hmSwipeup
+    - swipedown : hmSwipedown
 * tap : hmTap
 * doubletap : hmDoubleTap 
 
