@@ -170,6 +170,7 @@
       }
     };
   }
+  hammerCustomDirective.$inject = ['$parse'];
 
   // ---- Private Functions -----
 
