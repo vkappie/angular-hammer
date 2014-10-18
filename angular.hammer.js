@@ -52,7 +52,7 @@
      * @ngInject
      */
     angular.module('hmTouchEvents')
-      .directive(directiveName, function ($parse, $window) {
+      .directive(directiveName, ['$parse', '$window', function ($parse, $window) {
         return {
           'restrict' : 'A',
           'link' : function (scope, element, attrs) {
@@ -100,7 +100,7 @@
             });
           }
         };
-      });
+      }]);
   });
 
   // ---- Hammer Custom Recognizer Directive Implementation ----
