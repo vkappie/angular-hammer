@@ -69,6 +69,7 @@
                   }
                 },
                 opts = angular.fromJson(attrs.hmOptions),
+                gestureOpts = angular.fromJson(attrs.hmGestureOptions),
                 hammer = element.data('hammer');
 
             if (!Hammer || !$window.addEventListener) {
@@ -85,6 +86,14 @@
 
             if (!hammer) {
               hammer = new Hammer(element[0], opts);
+              if (gestureOpts) {
+                angular.forEach(gestureOpts, function(value, key) {
+                  var gesture = hammer.get(key);
+                  if (gesture) {
+                    gesture.set(value);
+                  }
+                });
+              }
               element.data('hammer', hammer);
             }
 
