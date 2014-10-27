@@ -126,8 +126,8 @@
               handler,
               recognizer;
 
-          if (options.directions) {
-            options.directions = parseDirections(options.directions);
+          if (options.direction) {
+            options.direction = parseDirections(options.direction);
           }
 
           recognizer = hammer.get(options.event);
