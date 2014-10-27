@@ -37,20 +37,14 @@
 
   // ---- Module Definition ----
 
-  /**
-   * @ngInject
-   */
   angular.module('hmTouchEvents', [])
-    .directive('hmCustom', hammerCustomDirective);
+    .directive('hmCustom', ['$parse', hammerCustomDirective]);
 
   angular.forEach(gestureTypes, function (type) {
     var directive = type.split(':'),
         directiveName = directive[0],
         eventName = directive[1];
 
-    /**
-     * @ngInject
-     */
     angular.module('hmTouchEvents')
       .directive(directiveName, ['$parse', '$window', function ($parse, $window) {
         return {
@@ -75,6 +69,7 @@
                   }
                 },
                 opts = angular.fromJson(attrs.hmOptions),
+                gestureOpts = angular.fromJson(attrs.hmGestureOptions),
                 hammer = element.data('hammer');
 
             if (!Hammer || !$window.addEventListener) {
@@ -91,6 +86,14 @@
 
             if (!hammer) {
               hammer = new Hammer(element[0], opts);
+              if (gestureOpts) {
+                angular.forEach(gestureOpts, function(value, key) {
+                  var gesture = hammer.get(key);
+                  if (gesture) {
+                    gesture.set(value);
+                  }
+                });
+              }
               element.data('hammer', hammer);
             }
 
@@ -109,8 +112,7 @@
     return {
       'restrict' : 'A',
       'link' : function (scope, element, attrs) {
-        var apply = scope.safeApply || scope.$apply,
-            hammer = element.data('hammer'),
+        var hammer = element.data('hammer'),
             opts = angular.fromJson(attrs.hmOptions),
             recognizerList = angular.fromJson(attrs.hmCustom);
 
