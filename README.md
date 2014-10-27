@@ -70,7 +70,7 @@ You can add custom gesture recognizers using the `hmCustom` directive. Custom ge
 These definitions may also include any of the properties in the [Pan](http://hammerjs.github.io/recognizer-pan), [Pinch](http://hammerjs.github.io/recognizer-pinch), [Press](http://hammerjs.github.io/recognizer-press), [Rotate](http://hammerjs.github.io/recognizer-rotate), [Swipe](http://hammerjs.github.io/recognizer-swipe), or [Tap](http://hammerjs.github.io/recognizer-tap) gesture recognizers. For those recognizers that take a `directions` option, please specify this as a string of the DIRECTION_* values separated by a `|` and containing no spaces. 
 
 ```
-[data-]hm-custom="[{'type':'pan','event':'rightTap','val':'onRightTap','pointers':2,'directions':'DIRECTION_LEFT|DIRECTION_RIGHT'}]"
+[data-]hm-custom="[{'type':'pan','event':'rightTap','val':'onRightTap','pointers':2,'direction':'DIRECTION_LEFT|DIRECTION_RIGHT'}]"
 ```
 
 ## Demo
