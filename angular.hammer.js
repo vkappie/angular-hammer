@@ -90,6 +90,9 @@
                 angular.forEach(gestureOpts, function(value, key) {
                   var gesture = hammer.get(key);
                   if (gesture) {
+                    if (value.direction) {
+                      value.direction = parseDirections(value.direction);
+                    }
                     gesture.set(value);
                   }
                 });
