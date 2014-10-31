@@ -29,7 +29,7 @@
       </header>
       <section>
         <h1>
-<a name="angular-hammer-v2" class="anchor" href="#angular-hammer-v2"><span class="octicon octicon-link"></span></a>Angular Hammer v2</h1>
+<a name="angular-hammer-v21" class="anchor" href="#angular-hammer-v21"><span class="octicon octicon-link"></span></a>Angular Hammer v2.1</h1>
 
 <p>An <a href="https://angularjs.org/">Angular.js</a> module that enables you to bind custom behavior to <a href="http://hammerjs.github.io/">Hammer.js</a> touch events. It was derived from the <a href="https://github.com/monospaced/angular-hammer">Angular Hammer</a> project by <a href="https://github.com/monospaced">Monospaced</a>.</p>
 
@@ -43,10 +43,20 @@
 
 <p>Add <code>hmTouchEvents</code> to your app or module's dependencies. This module is designed to work with Angular.js v1.2.0+, and Hammer.js v2.0.0+. </p>
 
+<h3>
+<a name="a-note-on-version-naming" class="anchor" href="#a-note-on-version-naming"><span class="octicon octicon-link"></span></a>A Note on Version Naming</h3>
+
+<p>Angular Hammer uses the semantic version naming convention <code>major.minor.patch</code> typical of most Bower projects, with one small difference. The <code>major</code> version will <em>only</em> change when the major version of Hammer.js changes. Changes to <code>minor</code> should be thought of as possibly breaking, though typically that only means rewriting the values of some attributes in your HTML. Changes to <code>patch</code> should be thought of as standard bug fixes or small feature additions.</p>
+
+<h3>
+<a name="a-note-on-angularjs-20" class="anchor" href="#a-note-on-angularjs-20"><span class="octicon octicon-link"></span></a>A Note on Angular.js 2.0</h3>
+
+<p>At this time Angular Hammer has been tested with both Angular.js v1.2.x and v1.3.0. Angular.js v2.0 presents massive changes to the framework. Until such time as this README indicates otherwise, it should be assumed that Angular Hammer <strong>will not</strong> be moving forward to Angular.js v2.0. I reserve the right to change my mind once the v2.0 spec come out and I am able to assess the transition path.</p>
+
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<p>The <code>hmTouchEvents</code> module provides a series of attribute <a href="https://docs.angularjs.org/guide/directive">directives</a> for hooking into the standard Hammer.js events. The following list shows the Hammer event and corresponding Angular directive (format: &lt;eventName&gt; : &lt;directiveName&gt;). Events on the top level are fired every time a gesture of that class happens. The second-level events are more specific to the gesture state, but that interaction also triggers a top level event. </p>
+<p>The <code>hmTouchEvents</code> module provides a series of attribute <a href="https://docs.angularjs.org/guide/directive">directives</a> for hooking into the standard Hammer.js events. The following list shows the Hammer event and corresponding Angular directive (format: &lt;eventName&gt; : &lt;directiveName&gt;). Events on the top level are fired every time a gesture of that type happens. The second-level events are more specific to the gesture state (i.e. direction, start/stop), but trigger events of their top level type. </p>
 
 <ul>
 <li>pan : hmPan
@@ -94,41 +104,62 @@
 </li>
 <li>tap : hmTap</li>
 <li>doubletap : hmDoubletap </li>
-</ul><p>Behaviors to be executed on an event are defined as values of the attribute. The directives first try to resolve the value to a function available on the scope; if that function is found the event is passed to it, otherwise the value is parsed as an <a href="https://docs.angularjs.org/guide/expression">Angular expression</a>. Beware, invalid Angular expressions will cause an error. </p>
+</ul>
+
+<p>Behaviors to be executed on an event are defined as values of the attribute. The directives first try to resolve the value to a function available on the scope; if that function is found the event is passed to it, otherwise the value is parsed as an <a href="https://docs.angularjs.org/guide/expression">Angular expression</a>. Beware, invalid Angular expressions will cause an error. </p>
 
 <pre><code>[data-]hm-tap="onHammer"            // Using a function available in the scope
 [data-]hm-tap="model.name='Ryan'"   // Using an Angular expression
 </code></pre>
 
-<p>You can set the options of the <a href="http://hammerjs.github.io/api/#hammer.manager">manager</a> via the <code>hm-options</code> attribute. Values for this should be specified as a stringified JSON object with the properties specified in the <a href="http://hammerjs.github.io/api/#hammer.defaults">Manager defaults</a> documentation.</p>
+<p>Each element that responds to Hammer events contains it's own <a href="http://hammerjs.github.io/api/#hammer.manager">manager</a>, which keeps track of the various gesture <a href="http://hammerjs.github.io/api/#hammer.recognizer">recognizers</a> attached to that element. Angular Hammer does not make use of the standard <a href="http://hammerjs.github.io/api/#hammer">Hammer() constructor</a>, instead instantiating an empty manager and adding only the required recognizers. However, if you were to add the same series of directives to an element, the default behavior would be the same as if they had been instantiated using the Hammer() constructor. </p>
 
-<pre><code>[data-]hm-options="{'touchAction':'auto','domEvents':false}"
+<p>Hammer.js provides specific options for both managers and recognizers. These options can be set in Angular Hammer using two attributes, <code>hmManagerOptions</code> and <code>hmRecognizerOptions</code>. The values for each of these attributes should be stringified JSON. Manager options are expressed as an Object. Recognizer options can be either a single Object applied to all recognizers, or an array of objects that each have a <code>type</code> property that is used to match the options to the recognizers.</p>
+
+<p>Some Hammer recognizers that accept a <code>direction</code> option. For these recognizers, use the <code>directions</code> option to specify which directions you would like to support. The value of this property should be a string of <code>DIRECTION_*</code> values separated by a <code>|</code> and containing no spaces. Angular Hammer will parse this field into the proper Hammer value, and pass set the <code>direction</code> option for the recognizer.  </p>
+
+<p>Example: Setting Manager Options </p>
+
+<pre><code>[data-]hm-manager-options='{"touchAction":"auto","domEvents":false}' 
+</code></pre>
+
+<p>Example: Setting Recognizer Options</p>
+
+<pre><code>[data-]hm-recognizer-options='{"enable":true,}'     // Using an Object definition
+[data-]hm-recognizer-options='[
+    {"type":"tap","enable":false,},
+    {"type":"pan","directions":"DIRECTION_HORIZONTAL|DIRECTION_UP"}
+]'
 </code></pre>
 
 <h3>
 <a name="custom-gesture-recognizers" class="anchor" href="#custom-gesture-recognizers"><span class="octicon octicon-link"></span></a>Custom Gesture Recognizers</h3>
 
-<p>You can add custom gesture recognizers using the <code>hmCustom</code> directive. Custom gestures are defined as a stringified JSON array of objects. Each object must contain three properties: </p>
+<p>You can add custom gesture recognizers using the <code>hmCustom</code> directive. The behavior that is executed when this gesture is recognized is the value of this attribute. Currently (as of v2.1), only a single behavior handling function can be passed as the custom directive value. This decision was made to unify the use of the <code>hmManagerOptions</code> and <code>hmRecognizerOptions</code>, but may be changed in future versions to support multiple behavior handlers.</p>
 
-<ul>
-<li>
-<code>type</code>: the base recognizer that you are extending</li>
-<li>
-<code>event</code> : the name of the custom event you are defining</li>
-<li>
-<code>val</code> : the function of expression to be triggered</li>
-</ul><p>These definitions may also include any of the properties in the <a href="http://hammerjs.github.io/recognizer-pan">Pan</a>, <a href="http://hammerjs.github.io/recognizer-pinch">Pinch</a>, <a href="http://hammerjs.github.io/recognizer-press">Press</a>, <a href="http://hammerjs.github.io/recognizer-rotate">Rotate</a>, <a href="http://hammerjs.github.io/recognizer-swipe">Swipe</a>, or <a href="http://hammerjs.github.io/recognizer-tap">Tap</a> gesture recognizers. For those recognizers that take a <code>directions</code> option, please specify this as a string of the DIRECTION_* values separated by a <code>|</code> and containing no spaces. </p>
+<p>To actually define the custom gesture, use a modify the value of the <code>hmRecognizerOptions</code> attribute. This value may include any of the properties of the <a href="http://hammerjs.github.io/recognizer-pan">Pan</a>, <a href="http://hammerjs.github.io/recognizer-pinch">Pinch</a>, <a href="http://hammerjs.github.io/recognizer-press">Press</a>, <a href="http://hammerjs.github.io/recognizer-rotate">Rotate</a>, <a href="http://hammerjs.github.io/recognizer-swipe">Swipe</a>, or <a href="http://hammerjs.github.io/recognizer-tap">Tap</a> gesture recognizers. The modification is the inclusion of two extra properties, <code>type</code> and <code>event</code>. The <code>event</code> property is the name of the gesture as well as the name of the event that Hammer will fire. The <code>type</code> property is used to determine which base type of gesture recognizer to modify.</p>
 
-<pre><code>[data-]hm-custom="[{'type':'pan','event':'rightTap','val':'onRightTap','pointers':2,'directions':'DIRECTION_LEFT|DIRECTION_RIGHT'}]"
+<p>I do not recommend mixing custom and standard gesture recognizers as there is a chance that conflicts may happen.</p>
+
+<p>Example: Defining a Custom Gesture Recognizer </p>
+
+<pre><code>[data-]hm-custom="onHammer"
+hm-manager-options='{}'
+hm-recognizer-options='[
+  {"type":"pan","event":"twoFingerPan","pointers":2,"directions":"DIRECTION_ALL"},
+  {"type":"tap","event":"dbltap","pointers":2,"taps":1}
+]'
 </code></pre>
 
 <h2>
 <a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
 
 <ul>
-  <li><a href="http://ryanmullins.github.io/angular-hammer/examples/default">Using the default set of recognizers.</a></li>
-  <li><a href="http://ryanmullins.github.io/angular-hammer/examples/custom">Defining a custom gesture recognizer.</a></li>
-  <li><a href="http://ryanmullins.github.io/angular-hammer/examples/dragging">Dragging a div around on the screen.</a></li>
+<li><a href="http://ryanmullins.github.io/angular-hammer/examples/default">Using the default set of recognizers</a></li>
+<li>
+<a href="http://ryanmullins.github.io/angular-hammer/examples/custom">Defining a custom gesture recognizer</a>.</li>
+<li>
+<a href="http://ryanmullins.github.io/angular-hammer/examples/dragging">Dragging a div around on the screen</a>.</li>
 </ul>
       </section>
       <footer>
@@ -137,6 +168,6 @@
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-
+    
   </body>
 </html>
