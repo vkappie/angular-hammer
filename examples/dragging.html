@@ -27,7 +27,7 @@
     </style>
   </head>
   <body>
-    <div ng-controller="hmCtrl" hm-dir="hm-dir" class="relpos"></div>
+    <div ng-controller="hmCtrl" hm-dir="hm-dir"></div>
     <script type="text/javascript" src="../bower_components/hammerjs/hammer.min.js"></script>
     <script type="text/javascript" src="../bower_components/angular/angular.min.js"></script>
     <script type="text/javascript" src="../angular.hammer.js"></script>
@@ -42,20 +42,17 @@
         .directive('hmDir', function () {
           return {
             'restrict' : 'AE',
-            'template' : '<div id="target" hm-panmove="onHammer">{{eventType}}</div>',
+            'template' : '<div id="target" hm-panmove="onHammer" class="relpos">{{eventType}}</div>',
             'link' : function (scope, element, attrs) {
-              var x, y;
-
               scope.onHammer = function onHammer (event) {
                 if (event.target === element[0].children[0]) {
-                  if (!x) { x = event.center.x; }
-                  if (!y) { y = event.center.y; }
-
                   scope.$apply(function () {
-                    x = event.center.x - 250;
-                    y = event.center.y - 250;
+                    var x = event.center.x - 250,
+                        y = event.center.y - 250;
 
-                    element.css({
+                    console.log(element.children());
+
+                    element.children().css({
                       'left' : x + 'px',
                       'top' : y + 'px'
                     });

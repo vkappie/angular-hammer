@@ -5,6 +5,11 @@
 
   var gestureTypes = [
     'hmCustom:custom',
+    'hmSwipe:swipe',
+    'hmSwipeleft:swipeleft',
+    'hmSwiperight:swiperight',
+    'hmSwipeup:swipeup',
+    'hmSwipedown:swipedown',
     'hmPan:pan',
     'hmPanstart:panstart',
     'hmPanmove:panmove',
@@ -14,6 +19,12 @@
     'hmPanright:panright',
     'hmPanup:panup',
     'hmPandown:pandown',
+    'hmPress:press',
+    'hmRotate:rotate',
+    'hmRotatestart:rotatestart',
+    'hmRotatemove:rotatemove',
+    'hmRotateend:rotateend',
+    'hmRotatecancel:rotatecancel',
     'hmPinch:pinch',
     'hmPinchstart:pinchstart',
     'hmPinchmove:pinchmove',
@@ -21,17 +32,6 @@
     'hmPinchcancel:pinchcancel',
     'hmPinchin:pinchin',
     'hmPinchout:pinchout',
-    'hmPress:press',
-    'hmRotate:rotate',
-    'hmRotatestart:rotatestart',
-    'hmRotatemove:rotatemove',
-    'hmRotateend:rotateend',
-    'hmRotatecancel:rotatecancel',
-    'hmSwipe:swipe',
-    'hmSwipeleft:swipeleft',
-    'hmSwiperight:swiperight',
-    'hmSwipeup:swipeup',
-    'hmSwipedown:swipedown',
     'hmTap:tap',
     'hmDoubletap:doubletap'
   ];
@@ -124,6 +124,29 @@
               } else if (angular.isObject(recognizerOpts) &&
                   eventName.indexOf(recognizerOpts.type) > -1) {
                 setupRecognizerWithOptions(hammer, recognizerOpts);
+              } else {
+                recognizerOpts = {'type':eventName};
+
+                if (recognizerOpts.type.indexOf('doubletap') > -1) {
+                  recognizerOpts.event = recognizerOpts.type;
+                  recognizerOpts.taps = 2;
+
+                  if (hammer.get('tap')) {
+                    recognizerOpts.recognizeWith = 'tap';
+                  }
+                }
+
+                if (recognizerOpts.type.indexOf('pan') > -1 &&
+                    hammer.get('swipe')) {
+                  recognizerOpts.recognizeWith = 'swipe';
+                }
+
+                if (recognizerOpts.type.indexOf('pinch') > -1 &&
+                    hammer.get('rotate')) {
+                  recognizerOpts.recognizeWith = 'rotate';
+                }
+
+                setupRecognizerWithOptions(hammer, recognizerOpts);
               }
 
               hammer.on(eventName, handler);
@@ -142,27 +165,27 @@
     var recognizer;
 
     if (options.type) {
-      if (options.type === 'pan') {
+      if (options.type.indexOf('pan') > -1) {
         recognizer = new Hammer.Pan(options);
       }
 
-      if (options.type === 'pinch') {
+      if (options.type.indexOf('pinch') > -1) {
         recognizer = new Hammer.Pinch(options);
       }
 
-      if (options.type === 'press') {
+      if (options.type.indexOf('press') > -1) {
         recognizer = new Hammer.Press(options);
       }
 
-      if (options.type === 'rotate') {
+      if (options.type.indexOf('rotate') > -1) {
         recognizer = new Hammer.Rotate(options);
       }
 
-      if (options.type === 'swipe') {
+      if (options.type.indexOf('swipe') > -1) {
         recognizer = new Hammer.Swipe(options);
       }
 
-      if (options.type === 'tap') {
+      if (options.type.indexOf('tap') > -1) {
         recognizer = new Hammer.Tap(options);
       }
     }
