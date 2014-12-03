@@ -1,8 +1,17 @@
+// ---- Angular Hammer ----
+
+// Copyright (c) 2014 Ryan S Mullins <ryan@ryanmullins.org>
+// Licensed under the MIT Software License
+
 (function (window, angular, Hammer) {
   'use strict';
 
-  // ---- Default Hammer Directive Definitions ----
-
+  /**
+   * Mapping of the getsure veent names with the Angular attribute directive
+   * names. Follows the form: <directiveName>:<eventName>.
+   *
+   * @type {Array}
+   */
   var gestureTypes = [
     'hmCustom:custom',
     'hmSwipe:swipe',
@@ -38,8 +47,22 @@
 
   // ---- Module Definition ----
 
+  /**
+   * @module hmTouchEvents
+   * @description Angular.js module for adding Hammer.js event listeners to HTML
+   * elements using attribute directives
+   * @requires angular
+   * @requires hammer
+   */
   angular.module('hmTouchEvents', []);
 
+  /**
+   * Iterates through each gesture type mapping and creates a directive for
+   * each of the
+   *
+   * @param  {String} type Mapping in the form of <directiveName>:<eventName>
+   * @return None
+   */
   angular.forEach(gestureTypes, function (type) {
     var directive = type.split(':'),
         directiveName = directive[0],
@@ -53,6 +76,8 @@
             var handlerName = attrs[directiveName],
                 handlerExpr = $parse(handlerName),
                 handler = function (event) {
+                  event.element = element;
+
                   var phase = scope.$root.$$phase,
                       fn = function () {
                         handlerExpr(scope, {$event: event});
@@ -94,28 +119,51 @@
               element.data('hammer', hammer);
             }
 
-            // Custom events are treated differently than others
-
             if (eventName === 'custom') {
+              // Handling custom events
+
+              // Custom events require you to define hmRecognizerOptions. If you
+              // do not define the this attribute no custom handlers will be created
+
               if (angular.isArray(recognizerOpts)) {
+                // The recognizer options may be stored in an array. In this
+                // case, Angular Hammer iterates through the array of options
+                // trying to find an occurrence of the options.type in the event
+                // name. If it find the type in the event name, it applies those
+                // options to the recognizer for events with that name. If it
+                // does not find the type in the event name it moves on.
+
                 angular.forEach(recognizerOpts, function (options) {
                   setupRecognizerWithOptions(hammer, options);
 
                   hammer.on(options.event, handler);
                   scope.$on('$destroy', function () {
-                    hammer.off(options.event, handler);
+                    hammer.destroy();
                   });
                 });
               } else if (angular.isObject(recognizerOpts)) {
+                // Recognizer options may be stored as an object. In this case,
+                // Angular Hammer applies the options directly to the manager
+                // instance for this element.
+
                 setupRecognizerWithOptions(hammer, recognizerOpts);
 
                 hammer.on(options.event, handler);
                 scope.$on('$destroy', function () {
-                  hammer.off(options.event, handler);
+                  hammer.destroy();
                 });
               }
             } else {
+              // Handling the standard events
+
               if (angular.isArray(recognizerOpts)) {
+                // The recognizer options may be stored in an array. In this
+                // case, Angular Hammer iterates through the array of options
+                // trying to find an occurrence of the options.type in the event
+                // name. If it find the type in the event name, it applies those
+                // options to the recognizer for events with that name. If it
+                // does not find the type in the event name it moves on.
+
                 angular.forEach(recognizerOpts, function (options) {
                   if (eventName.indexOf(options.type) > -1) {
                     setupRecognizerWithOptions(hammer, options);
@@ -123,8 +171,20 @@
                 });
               } else if (angular.isObject(recognizerOpts) &&
                   eventName.indexOf(recognizerOpts.type) > -1) {
+                // Recognizer options may be stored as an object. In this case,
+                // Angular Hammer checks to make sure that the options type
+                // property is found in the event name. If the options are
+                // designated for this general type of event, Angular Hammer
+                // applies the options directly to the manager instance for
+                // this element.
+
                 setupRecognizerWithOptions(hammer, recognizerOpts);
               } else {
+                // If no options are supplied, or the supplied options do not
+                // match any of the above conditions, Angular Hammer sets up
+                // the default options that a manager instantiated using
+                // Hammer() would have.
+
                 recognizerOpts = {'type':eventName};
 
                 if (recognizerOpts.type.indexOf('doubletap') > -1) {
@@ -151,7 +211,7 @@
 
               hammer.on(eventName, handler);
               scope.$on('$destroy', function () {
-                hammer.off(eventName, handler);
+                hammer.destroy();
               });
             }
           }
@@ -161,6 +221,15 @@
 
   // ---- Private Functions -----
 
+  /**
+   * Adds a gesture recognizer to a given manager. The type of recognizer to
+   * add is determined by the value of the options.type property.
+   *
+   * @param {Object}  manager Hammer.js manager object assigned to an element
+   * @param {Object}  options Options that define the recognizer to add
+   * @return {Object} Reference to the new gesture recognizer, if successful,
+   *                  null otherwise.
+   */
   function addRecognizer (manager, options) {
     var recognizer;
 
@@ -196,6 +265,15 @@
     }
   }
 
+  /**
+   * Applies the passed options object to the appropriate gesture recognizer.
+   * Recognizers are created if they do not already exist. See the README for a
+   * description of the options object that can be passed to this function.
+   *
+   * @param  {Object} manager Hammer.js manager object assigned to an element
+   * @param  {Object} options Options applied to a recognizer managed by manager
+   * @return None
+   */
   function setupRecognizerWithOptions (manager, options) {
     var recognizer = manager.get(options.type);
 
@@ -228,6 +306,13 @@
     }
   }
 
+  /**
+   * Parses the value of the directions property of any Angular Hammer options
+   * object and converts them into the standard Hammer.js directions values.
+   *
+   * @param  {String} dirs Direction names separated by '|' characters
+   * @return {Number}      Hammer.js direction value
+   */
   function parseDirections (dirs) {
     var directions = 0;
 
@@ -239,4 +324,8 @@
 
     return directions;
   }
-})(window, window.angular, window.Hammer);
+})(
+  window,
+  (angular || require('angular') || window.angular),
+  (Hammer || require('Hammer') || window.Hammer)
+);
