@@ -7,9 +7,5 @@
 .idea/
 bower_components/
 node_modules/
-public/system/lib
-mean.iml
-test/coverage/
-modules/public/
-modules/views/
-/public/build/
+examples/lib/
+examples/angular*
