@@ -3,11 +3,51 @@
 // Copyright (c) 2014 Ryan S Mullins <ryan@ryanmullins.org>
 // Licensed under the MIT Software License
 
-(function (window, angular, Hammer) {
+(function () {
   'use strict';
 
+  // Checking to make sure Hammer and Angular are defined
+
+  if (typeof angular === 'undefined') {
+    var angular;
+
+    if (typeof require !== 'undefined' && require) {
+      try {
+        angular = require('angular');
+      } finally {
+        return console.log('ERROR: require("angular") could not find the Angular.js module');
+      }
+    } else if (typeof window.angular !== 'undefined') {
+      angular = window.angular;
+    } else {
+      return console.log('ERROR: Angular Hammer could not find or require() a reference to angular');
+    }
+  }
+
+  if (typeof Hammer === 'undefined') {
+    var Hammer;
+
+    if (typeof require !== 'undefined' && require) {
+      try {
+        Hammer = require('hammer');
+      } catch (e) {
+        try {
+          Hammer = require('hammerjs');
+        } finally {
+          return console.log('ERROR: require("hammerjs") could not find the Hammer.js module');
+        }
+      } finally {
+        return console.log('ERROR: require("hammer") could not find the Hammer.js module');
+      }
+    } else if (typeof window.Hammer !== 'undefined') {
+      Hammer = window.Hammer;
+    } else {
+      return console.log('ERROR: Angular Hammer could not find or require() a reference to Hammer');
+    }
+  }
+
   /**
-   * Mapping of the getsure veent names with the Angular attribute directive
+   * Mapping of the gesture event names with the Angular attribute directive
    * names. Follows the form: <directiveName>:<eventName>.
    *
    * @type {Array}
@@ -324,8 +364,4 @@
 
     return directions;
   }
-})(
-  window,
-  (angular || require('angular') || window.angular),
-  (Hammer || require('Hammer') || window.Hammer)
-);
+})();
