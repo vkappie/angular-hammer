@@ -7,16 +7,11 @@
   'use strict';
 
   // Checking to make sure Hammer and Angular are defined
+  var angular, Hammer;
 
   if (typeof angular === 'undefined') {
-    var angular;
-
     if (typeof require !== 'undefined' && require) {
-      try {
-        angular = require('angular');
-      } finally {
-        return console.log('ERROR: require("angular") could not find the Angular.js module');
-      }
+      angular = require('angular');
     } else if (typeof window.angular !== 'undefined') {
       angular = window.angular;
     } else {
@@ -25,19 +20,15 @@
   }
 
   if (typeof Hammer === 'undefined') {
-    var Hammer;
-
     if (typeof require !== 'undefined' && require) {
       try {
-        Hammer = require('hammer');
+        Hammer = require('hammerjs');
       } catch (e) {
         try {
-          Hammer = require('hammerjs');
-        } finally {
-          return console.log('ERROR: require("hammerjs") could not find the Hammer.js module');
+          Hammer = require('hammer');
+        } catch (e) {
+          return console.log('ERROR: Angular Hammer could not require() a reference to Hammer');
         }
-      } finally {
-        return console.log('ERROR: require("hammer") could not find the Hammer.js module');
       }
     } else if (typeof window.Hammer !== 'undefined') {
       Hammer = window.Hammer;
