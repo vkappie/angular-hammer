@@ -10,6 +10,12 @@ Install using the [Bower](http://bower.io/) package manager.
 $ bower install ryanmullins-angular-hammer
 ```
 
+Install using NPM.
+
+```shell
+$ npm install --save angular-hammer
+```
+
 Add `hmTouchEvents` to your app or module's dependencies. This module is designed to work with Angular.js v1.2.0+, and Hammer.js v2.0.0+. 
 
 ### A Note on Version Naming
