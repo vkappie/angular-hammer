@@ -110,18 +110,14 @@
                   event.element = element;
 
                   var phase = scope.$root.$$phase,
-                      fn = function () {
-                        handlerExpr(scope, {$event: event});
-                      };
+                      fn = handlerExpr(scope);
 
-                  if (scope[handlerName]) {
-                    scope[handlerName](event);
+                  if (phase === '$apply' || phase === '$digest') {
+                    fn.call(scope, event);
                   } else {
-                    if (phase === '$apply' || phase === '$digest') {
-                      fn();
-                    } else {
-                      scope.$apply(fn);
-                    }
+                    scope.$apply(function() {
+                      fn.call(scope, event);
+                    });
                   }
                 },
                 managerOpts = angular.fromJson(attrs.hmManagerOptions),
