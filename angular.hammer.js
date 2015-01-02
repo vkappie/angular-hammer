@@ -275,6 +275,8 @@
    * @return None
    */
   function applyManagerOptions (managerOpts, recognizerOpts) {
+    if (!managerOpts || !recognizerOpts) { return; }
+
     recognizerOpts.preventGhosts = managerOpts.preventGhosts;
 
     return recognizerOpts;
@@ -435,4 +437,4 @@
       }
     }
   }
-})(window, angular, Hammer);
+})(window, window.angular, window.Hammer);

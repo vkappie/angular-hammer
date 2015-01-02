@@ -7,5 +7,3 @@
 .idea/
 bower_components/
 node_modules/
-examples/lib/
-examples/angular*
