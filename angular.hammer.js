@@ -143,102 +143,90 @@
             if (!hammer) {
               hammer = new Hammer.Manager(element[0], managerOpts);
               element.data('hammer', hammer);
-            }
-
-            if (eventName === 'custom') {
-              // Handling custom events
-
-              // Custom events require you to define hmRecognizerOptions. If you
-              // do not define the this attribute no custom handlers will be created
-
-              if (angular.isArray(recognizerOpts)) {
-                // The recognizer options may be stored in an array. In this
-                // case, Angular Hammer iterates through the array of options
-                // trying to find an occurrence of the options.type in the event
-                // name. If it find the type in the event name, it applies those
-                // options to the recognizer for events with that name. If it
-                // does not find the type in the event name it moves on.
-
-                angular.forEach(recognizerOpts, function (options) {
-                  setupRecognizerWithOptions(hammer, options, element);
-
-                  hammer.on(options.event, handler);
-                  scope.$on('$destroy', function () {
-                    hammer.destroy();
-                  });
-                });
-              } else if (angular.isObject(recognizerOpts)) {
-                // Recognizer options may be stored as an object. In this case,
-                // Angular Hammer applies the options directly to the manager
-                // instance for this element.
-
-                setupRecognizerWithOptions(hammer, recognizerOpts, element);
-
-                hammer.on(options.event, handler);
-                scope.$on('$destroy', function () {
-                  hammer.destroy();
-                });
-              }
-            } else {
-              // Handling the standard events
-
-              if (angular.isArray(recognizerOpts)) {
-                // The recognizer options may be stored in an array. In this
-                // case, Angular Hammer iterates through the array of options
-                // trying to find an occurrence of the options.type in the event
-                // name. If it find the type in the event name, it applies those
-                // options to the recognizer for events with that name. If it
-                // does not find the type in the event name it moves on.
-
-                angular.forEach(recognizerOpts, function (options) {
-                  if (eventName.indexOf(options.type) > -1) {
-                    setupRecognizerWithOptions(hammer, options, element);
-                  }
-                });
-              } else if (angular.isObject(recognizerOpts) &&
-                  eventName.indexOf(recognizerOpts.type) > -1) {
-                // Recognizer options may be stored as an object. In this case,
-                // Angular Hammer checks to make sure that the options type
-                // property is found in the event name. If the options are
-                // designated for this general type of event, Angular Hammer
-                // applies the options directly to the manager instance for
-                // this element.
-
-                setupRecognizerWithOptions(hammer, recognizerOpts, element);
-              } else {
-                // If no options are supplied, or the supplied options do not
-                // match any of the above conditions, Angular Hammer sets up
-                // the default options that a manager instantiated using
-                // Hammer() would have.
-
-                recognizerOpts = {'type':eventName, 'event':eventName};
-
-                if (recognizerOpts.type.indexOf('doubletap') > -1) {
-                  recognizerOpts.event = recognizerOpts.type;
-                  recognizerOpts.taps = 2;
-
-                  if (hammer.get('tap')) {
-                    recognizerOpts.recognizeWith = 'tap';
-                  }
-                }
-
-                if (recognizerOpts.type.indexOf('pan') > -1 &&
-                    hammer.get('swipe')) {
-                  recognizerOpts.recognizeWith = 'swipe';
-                }
-
-                if (recognizerOpts.type.indexOf('pinch') > -1 &&
-                    hammer.get('rotate')) {
-                  recognizerOpts.recognizeWith = 'rotate';
-                }
-
-                setupRecognizerWithOptions(hammer, recognizerOpts, element);
-              }
-
-              hammer.on(eventName, handler);
               scope.$on('$destroy', function () {
                 hammer.destroy();
               });
+            }
+
+            // Setting up the recognizers based on the supplied options
+
+            if (angular.isArray(recognizerOpts)) {
+              // The recognizer options may be stored in an array. In this
+              // case, Angular Hammer iterates through the array of options
+              // trying to find an occurrence of the options.type in the event
+              // name. If it find the type in the event name, it applies those
+              // options to the recognizer for events with that name. If it
+              // does not find the type in the event name it moves on.
+
+              angular.forEach(recognizerOpts, function (options) {
+                if (directiveName === 'hmCustom') {
+                  eventName = options.event;
+                }
+
+                if (directiveName === 'hmCustom' ||
+                    eventName.indexOf(options.type) > -1) {
+                  setupRecognizerWithOptions(
+                    hammer,
+                    applyManagerOptions(options),
+                    element);
+                }
+              });
+            } else if (angular.isObject(recognizerOpts)) {
+              // Recognizer options may be stored as an object. In this case,
+              // Angular Hammer checks to make sure that the options type
+              // property is found in the event name. If the options are
+              // designated for this general type of event, Angular Hammer
+              // applies the options directly to the manager instance for
+              // this element.
+
+              if (directiveName === 'hmCustom') {
+                eventName = recognizerOpts.event;
+              }
+
+              if (directiveName === 'hmCustom' ||
+                  eventName.indexOf(recognizerOpts.type) > -1) {
+                setupRecognizerWithOptions(
+                  hammer,
+                  applyManagerOptions(recognizerOpts),
+                  element);
+              }
+            } else if (directiveName !== 'hmCustom') {
+              // If no options are supplied, or the supplied options do not
+              // match any of the above conditions, Angular Hammer sets up
+              // the default options that a manager instantiated using
+              // Hammer() would have.
+
+              recognizerOpts = {'type':eventName, 'event':eventName};
+
+              if (recognizerOpts.type.indexOf('doubletap') > -1) {
+                recognizerOpts.event = recognizerOpts.type;
+                recognizerOpts.taps = 2;
+
+                if (hammer.get('tap')) {
+                  recognizerOpts.recognizeWith = 'tap';
+                }
+              }
+
+              if (recognizerOpts.type.indexOf('pan') > -1 &&
+                  hammer.get('swipe')) {
+                recognizerOpts.recognizeWith = 'swipe';
+              }
+
+              if (recognizerOpts.type.indexOf('pinch') > -1 &&
+                  hammer.get('rotate')) {
+                recognizerOpts.recognizeWith = 'rotate';
+              }
+
+              setupRecognizerWithOptions(
+                hammer,
+                applyManagerOptions(recognizerOpts),
+                element);
+            } else {
+              eventName = null;
+            }
+
+            if (eventName) {
+              hammer.on(eventName, handler);
             }
           }
         };
@@ -277,6 +265,19 @@
 
     manager.add(recognizer);
     return recognizer;
+  }
+
+  /**
+   * Applies certain manager options to individual recognizer options.
+   *
+   * @param  {Object} managerOpts    Manager options
+   * @param  {Object} recognizerOpts Recognizer options
+   * @return None
+   */
+  function applyManagerOptions (managerOpts, recognizerOpts) {
+    recognizerOpts.preventGhosts = managerOpts.preventGhosts;
+
+    return recognizerOpts;
   }
 
   /**
