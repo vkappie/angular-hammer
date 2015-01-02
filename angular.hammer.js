@@ -213,20 +213,6 @@
 
                 recognizerOpts = {'type':eventName, 'event':eventName};
 
-                if (recognizerOpts.type.indexOf('left') > -1) {
-                  recognizerOpts.directions = 'DIRECTION_LEFT';
-                } else if (recognizerOpts.type.indexOf('right') > -1) {
-                  recognizerOpts.directions = 'DIRECTION_RIGHT';
-                } else if (recognizerOpts.type.indexOf('up') > -1) {
-                  recognizerOpts.directions = 'DIRECTION_UP';
-                } else if (recognizerOpts.type.indexOf('down') > -1) {
-                  recognizerOpts.directions = 'DIRECTION_DOWN';
-                } else if (
-                    recognizerOpts.type === 'pan' ||
-                    recognizerOpts.type === 'swipe') {
-                  recognizerOpts.directions = 'DIRECTION_ALL';
-                }
-
                 if (recognizerOpts.type.indexOf('doubletap') > -1) {
                   recognizerOpts.event = recognizerOpts.type;
                   recognizerOpts.taps = 2;
@@ -311,10 +297,23 @@
       recognizer = addRecognizer(manager, options);
     }
 
-    if (options.directions) {
-      options.direction = parseDirections(options.directions);
+    if (!options.directions) {
+      if (options.type === 'pan' || options.type === 'swipe') {
+        options.directions = 'DIRECTION_ALL';
+      } else if (options.type.indexOf('left') > -1) {
+        options.directions = 'DIRECTION_LEFT';
+      } else if (options.type.indexOf('right') > -1) {
+        options.directions = 'DIRECTION_RIGHT';
+      } else if (options.type.indexOf('up') > -1) {
+        options.directions = 'DIRECTION_UP';
+      } else if (options.type.indexOf('down') > -1) {
+        options.directions = 'DIRECTION_DOWN';
+      } else {
+        options.directions = '';
+      }
     }
 
+    options.direction = parseDirections(options.directions);
     recognizer.set(options);
 
     if (options.recognizeWith) {
@@ -369,6 +368,8 @@
    */
 
   function preventGhosts (element) {
+    if (!element) { return; }
+
     var coordinates = [],
         threshold = 25,
         timeout = 2500,
