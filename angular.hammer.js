@@ -160,7 +160,7 @@
                 // does not find the type in the event name it moves on.
 
                 angular.forEach(recognizerOpts, function (options) {
-                  setupRecognizerWithOptions(hammer, options);
+                  setupRecognizerWithOptions(hammer, options, element);
 
                   hammer.on(options.event, handler);
                   scope.$on('$destroy', function () {
@@ -172,7 +172,7 @@
                 // Angular Hammer applies the options directly to the manager
                 // instance for this element.
 
-                setupRecognizerWithOptions(hammer, recognizerOpts);
+                setupRecognizerWithOptions(hammer, recognizerOpts, element);
 
                 hammer.on(options.event, handler);
                 scope.$on('$destroy', function () {
@@ -192,7 +192,7 @@
 
                 angular.forEach(recognizerOpts, function (options) {
                   if (eventName.indexOf(options.type) > -1) {
-                    setupRecognizerWithOptions(hammer, options);
+                    setupRecognizerWithOptions(hammer, options, element);
                   }
                 });
               } else if (angular.isObject(recognizerOpts) &&
@@ -204,7 +204,7 @@
                 // applies the options directly to the manager instance for
                 // this element.
 
-                setupRecognizerWithOptions(hammer, recognizerOpts);
+                setupRecognizerWithOptions(hammer, recognizerOpts, element);
               } else {
                 // If no options are supplied, or the supplied options do not
                 // match any of the above conditions, Angular Hammer sets up
@@ -246,7 +246,7 @@
                   recognizerOpts.recognizeWith = 'rotate';
                 }
 
-                setupRecognizerWithOptions(hammer, recognizerOpts);
+                setupRecognizerWithOptions(hammer, recognizerOpts, element);
               }
 
               hammer.on(eventName, handler);
@@ -271,38 +271,26 @@
    *                  null otherwise.
    */
   function addRecognizer (manager, options) {
+    if (!manager || !options || options.type) { return null; }
+
     var recognizer;
 
-    if (options.type) {
-      if (options.type.indexOf('pan') > -1) {
-        recognizer = new Hammer.Pan(options);
-      }
-
-      if (options.type.indexOf('pinch') > -1) {
-        recognizer = new Hammer.Pinch(options);
-      }
-
-      if (options.type.indexOf('press') > -1) {
-        recognizer = new Hammer.Press(options);
-      }
-
-      if (options.type.indexOf('rotate') > -1) {
-        recognizer = new Hammer.Rotate(options);
-      }
-
-      if (options.type.indexOf('swipe') > -1) {
-        recognizer = new Hammer.Swipe(options);
-      }
-
-      if (options.type.indexOf('tap') > -1) {
-        recognizer = new Hammer.Tap(options);
-      }
+    if (options.type.indexOf('pan') > -1) {
+      recognizer = new Hammer.Pan(options);
+    } else if (options.type.indexOf('pinch') > -1) {
+      recognizer = new Hammer.Pinch(options);
+    } else if (options.type.indexOf('press') > -1) {
+      recognizer = new Hammer.Press(options);
+    } else if (options.type.indexOf('rotate') > -1) {
+      recognizer = new Hammer.Rotate(options);
+    } else if (options.type.indexOf('swipe') > -1) {
+      recognizer = new Hammer.Swipe(options);
+    } else {
+      recognizer = new Hammer.Tap(options);
     }
 
-    if (manager && recognizer) {
-      manager.add(recognizer);
-      return recognizer;
-    }
+    manager.add(recognizer);
+    return recognizer;
   }
 
   /**
@@ -314,20 +302,20 @@
    * @param  {Object} options Options applied to a recognizer managed by manager
    * @return None
    */
-  function setupRecognizerWithOptions (manager, options) {
+  function setupRecognizerWithOptions (manager, options, element) {
+    if (!manager || !options) { return; }
+
     var recognizer = manager.get(options.type);
 
     if (!recognizer) {
       recognizer = addRecognizer(manager, options);
     }
 
-    if (options) {
-      if (options.directions) {
-        options.direction = parseDirections(options.directions);
-      }
-
-      recognizer.set(options);
+    if (options.directions) {
+      options.direction = parseDirections(options.directions);
     }
+
+    recognizer.set(options);
 
     if (options.recognizeWith) {
       recognizer.recognizeWith(options.recognizeWith);
@@ -343,6 +331,10 @@
 
     if (options.dropRequireFailure) {
       recognizer.dropRequireFailure(options.dropRequireFailure);
+    }
+
+    if (options.preventGhosts && element) {
+      preventGhosts(element);
     }
   }
 
@@ -363,5 +355,82 @@
     });
 
     return directions;
+  }
+
+  // ---- Preventing Ghost Clicks ----
+
+  /**
+   * Modified from: https://gist.github.com/jtangelder/361052976f044200ea17
+   *
+   * Prevent click events after a touchend.
+   *
+   * Inspired/copy-paste from this article of Google by Ryan Fioravanti
+   * https://developers.google.com/mobile/articles/fast_buttons#ghost
+   */
+
+  function preventGhosts (element) {
+    var coordinates = [],
+        threshold = 25,
+        timeout = 2500,
+        preventGhostsEnabled = false;
+
+    if ('ontouchstart' in window) {
+      element.addEventListener('touchstart', resetCoordinates, true);
+      element.addEventListener('touchend', registerCoordinates, true);
+
+      if (!preventGhostsEnabled) {
+        window.document.addEventListener('click', preventGhostClick, true);
+      }
+    }
+
+    /**
+     * prevent clicks if they're in a registered XY region
+     * @param {MouseEvent} ev
+     */
+    function preventGhostClick (ev) {
+      for (var i = 0; i < coordinates.length; i++) {
+        var x = coordinates[i][0];
+        var y = coordinates[i][1];
+
+        // within the range, so prevent the click
+        if (Math.abs(ev.clientX - x) < threshold &&
+            Math.abs(ev.clientY - y) < threshold) {
+          ev.stopPropagation();
+          ev.preventDefault();
+          break;
+        }
+      }
+    }
+
+    /**
+     * reset the coordinates array
+     */
+    function resetCoordinates () {
+      coordinates = [];
+    }
+
+    /**
+     * remove the first coordinates set from the array
+     */
+    function popCoordinates () {
+      coordinates.splice(0, 1);
+    }
+
+    /**
+     * if it is an final touchend, we want to register it's place
+     * @param {TouchEvent} ev
+     */
+    function registerCoordinates (ev) {
+      // touchend is triggered on every releasing finger
+      // changed touches always contain the removed touches on a touchend
+      // the touches object might contain these also at some browsers (firefox os)
+      // so touches - changedTouches will be 0 or lower, like -1, on the final touchend
+      if(ev.touches.length - ev.changedTouches.length <= 0) {
+        var touch = ev.changedTouches[0];
+        coordinates.push([touch.clientX, touch.clientY]);
+
+        setTimeout(popCoordinates, timeout);
+      }
+    }
   }
 })(window, angular, Hammer);
