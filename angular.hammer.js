@@ -167,7 +167,7 @@
                     eventName.indexOf(options.type) > -1) {
                   setupRecognizerWithOptions(
                     hammer,
-                    applyManagerOptions(options),
+                    applyManagerOptions(managerOpts, options),
                     element);
                 }
               });
@@ -187,7 +187,7 @@
                   eventName.indexOf(recognizerOpts.type) > -1) {
                 setupRecognizerWithOptions(
                   hammer,
-                  applyManagerOptions(recognizerOpts),
+                  applyManagerOptions(managerOpts, recognizerOpts),
                   element);
               }
             } else if (directiveName !== 'hmCustom') {
@@ -219,7 +219,7 @@
 
               setupRecognizerWithOptions(
                 hammer,
-                applyManagerOptions(recognizerOpts),
+                applyManagerOptions(managerOpts, recognizerOpts),
                 element);
             } else {
               eventName = null;
@@ -245,7 +245,7 @@
    *                  null otherwise.
    */
   function addRecognizer (manager, options) {
-    if (!manager || !options || options.type) { return null; }
+    if (!manager || !options || !options.type) { return null; }
 
     var recognizer;
 
@@ -275,9 +275,9 @@
    * @return None
    */
   function applyManagerOptions (managerOpts, recognizerOpts) {
-    if (!managerOpts || !recognizerOpts) { return; }
-
-    recognizerOpts.preventGhosts = managerOpts.preventGhosts;
+    if (managerOpts) {
+      recognizerOpts.preventGhosts = managerOpts.preventGhosts;
+    }
 
     return recognizerOpts;
   }
