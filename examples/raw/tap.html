@@ -43,7 +43,7 @@
         <div>ngClick</div>
         <div>{{model.click.count}} ({{model.click.time}})</div>
       </div>
-      <div class="target" hm-doubletap="onHammer" hm-recognizer-options='{"type":"tap","preventGhosts":true}'>
+      <div class="target" hm-doubletap="onHammer" hm-recognizer-options='{"type":"tap", "event":"doubletap", "taps":2, "preventGhosts":true}'>
         <div>hmDoubletap</div>
         <div>{{model.doubletap.count}} ({{model.doubletap.time}})</div>
         <div>ngClick</div>
