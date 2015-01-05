@@ -101,11 +101,14 @@ module.exports = function (grunt) {
     watch: {
       js:  {
         files: ['./angular.hammer.js'],
-        tasks: ['browserify:dev']
+        tasks: ['copy', 'browserify']
       },
       raw: {
-        files: ['./angular.hammer.js'],
-        tasks: ['browserify:dev']
+        files: [
+          './angular.hammer.js',
+          './angular.hammer.min.js'
+        ],
+        tasks: ['copy']
       }
     },
     webpack: {
@@ -113,9 +116,11 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-webpack');
