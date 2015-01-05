@@ -1,6 +1,6 @@
 {
   "name": "angular-hammer",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Hammer.js support for Angular.js applications",
   "main": "angular.hammer.js",
   "directories": {
@@ -17,7 +17,8 @@
     "hammer",
     "angular",
     "javascript",
-    "touch"
+    "touch",
+    "gesture"
   ],
   "author": "Ryan S Mullins",
   "license": "MIT",

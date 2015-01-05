@@ -1,6 +1,6 @@
 {
   "name": "AngularHammer",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "authors": [
     "Ryan S Mullins <ryan@ryanmullins.org>"
   ],
@@ -11,7 +11,8 @@
     "Angular",
     "Hammer",
     "touch",
-    "getsure"
+    "javascript",
+    "gesture"
   ],
   "ignore": [
     "**/.*",
