@@ -4,16 +4,17 @@
     <style type="text/css">
       html, body {
         background-color: #d1c9b8;
+        font-family: 'Futura', 'Avenir', 'Helvetica', sans-serif;
       }
 
       .target {
-        width: 100px;
-        height: 100px;
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        margin: 20px;
         text-align: center;
         color: white;
         background-color: #444;
-        font-size: 36pt;
-        font-family: 'Futura', 'Avenir', 'Helvetica', sans-serif;
       }
     </style>
   </head>
@@ -77,6 +78,7 @@
           $scope.model = {};
 
           $scope.onHammer = function onHammer (event) {
+            console.log('I got a pan-related event!', event.type, Date.now());
             if (!$scope.model[event.type]) {
               $scope.model[event.type] = {
                 count: 0,

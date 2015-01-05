@@ -196,7 +196,9 @@
               // the default options that a manager instantiated using
               // Hammer() would have.
 
-              recognizerOpts = {'type':eventName, 'event':eventName};
+              recognizerOpts = {
+                'type': getRecognizerTypeFromeventName(eventName)
+              };
 
               if (recognizerOpts.type.indexOf('doubletap') > -1) {
                 recognizerOpts.event = recognizerOpts.type;
@@ -280,6 +282,22 @@
     }
 
     return recognizerOpts;
+  }
+
+  function getRecognizerTypeFromeventName (eventName) {
+    if (eventName.indexOf('pan') > -1) {
+      return 'pan';
+    } else if (eventName.indexOf('pinch') > -1) {
+      return 'pinch';
+    } else if (eventName.indexOf('press') > -1) {
+      return 'press';
+    } else if (eventName.indexOf('rotate') > -1) {
+      return 'rotate';
+    } else if (eventName.indexOf('swipe') > -1) {
+      return 'swipe';
+    } else {
+      return 'tap';
+    }
   }
 
   /**
