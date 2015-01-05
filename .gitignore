@@ -11,3 +11,4 @@ npm-debug.log
 
 examples/**/angular*.js
 examples/**/hammer*.js
+examples/**/example*.js
