@@ -361,18 +361,26 @@
     recognizer.set(options);
 
     if (options.recognizeWith) {
+      if (!manager.get(options.recognizeWith)){
+        addRecognizer(manager, {type:options.recognizeWith});
+      }
+
       recognizer.recognizeWith(options.recognizeWith);
     }
 
-    if (options.dropRecognizeWith) {
+    if (options.dropRecognizeWith && hammer.get(options.dropRecognizeWith)) {
       recognizer.dropRecognizeWith(options.dropRecognizeWith);
     }
 
     if (options.requireFailure) {
+      if (!manager.get(options.requireFailure)){
+        addRecognizer(manager, {type:options.requireFailure});
+      }
+
       recognizer.requireFailure(options.requireFailure);
     }
 
-    if (options.dropRequireFailure) {
+    if (options.dropRequireFailure && hammer.get(options.dropRequireFailure)) {
       recognizer.dropRequireFailure(options.dropRequireFailure);
     }
 
