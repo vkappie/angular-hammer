@@ -161,6 +161,14 @@
               angular.forEach(recognizerOpts, function (options) {
                 if (directiveName === 'hmCustom') {
                   eventName = options.event;
+                } else {
+                  if (!options.type) {
+                    options.type = getRecognizerTypeFromeventName(eventName);
+                  }
+
+                  if (options.event) {
+                    delete options.event;
+                  }
                 }
 
                 if (directiveName === 'hmCustom' ||
@@ -181,6 +189,14 @@
 
               if (directiveName === 'hmCustom') {
                 eventName = recognizerOpts.event;
+              } else {
+                  if (!recognizerOpts.type) {
+                    recognizerOpts.type = getRecognizerTypeFromeventName(eventName);
+                  }
+
+                  if (recognizerOpts.event) {
+                    delete recognizerOpts.event;
+                  }
               }
 
               if (directiveName === 'hmCustom' ||
