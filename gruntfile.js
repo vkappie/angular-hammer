@@ -13,6 +13,12 @@ module.exports = function (grunt) {
         }
       }
     },
+    concurrent: {
+      tasks: ['watch','nodemon'],
+      options: {
+        logConcurrentOutput: true
+      }
+    },
     copy: {
       raw: {
         expand: true,
@@ -24,25 +30,18 @@ module.exports = function (grunt) {
         ],
         dest: './examples/raw/'
       },
-      requirejs: {
+      rawmin: {
         expand: true,
         flatten: true,
         src: [
-          './angular.hammer.js',
-          './node_modules/hammerjs/hammer.js',
-          './node_modules/angular/angular.js'
+          './angular.hammer.min.js',
+          './angular.hammer.min.js.map',
+          './node_modules/angular/angular.min.js',
+          './node_modules/angular/angular.min.js.map',
+          './node_modules/hammerjs/hammer.min.js',
+          './node_modules/hammerjs/hammer.min.js.map'
         ],
-        dest: './examples/requirejs/'
-      },
-      webpack: {
-        expand: true,
-        flatten: true,
-        src: [
-          './angular.hammer.js',
-          './node_modules/hammerjs/hammer.js',
-          './node_modules/angular/angular.js'
-        ],
-        dest: './examples/webpack/'
+        dest: './examples/raw/'
       }
     },
     jsdoc : {
@@ -56,13 +55,13 @@ module.exports = function (grunt) {
     },
     nodemon: {
       demo: {
-        script:'server.js'
+        script:'server.js',
+        options: {
+          watch: ['./examples']
+        }
       }
     },
     requirejs: {
-      demo: {
-
-      }
     },
     uglify: {
       dist: {
@@ -82,18 +81,6 @@ module.exports = function (grunt) {
         },
         './examples/browserify/example.js': ['./examples/browserify/example.js']
       },
-      raw: {
-        options: {
-          sourceMap: true,
-          sourceMapName: './examples/raw/example.min.js.map',
-          mangle: true
-        },
-        './examples/raw/example.js': [
-          './examples/raw/angular.js',
-          './examples/raw/hammer.js',
-          './examples/raw/angular.hammer.js'
-        ]
-      },
       requirejs: {
         options: {
           sourceMap: true,
@@ -111,10 +98,17 @@ module.exports = function (grunt) {
         './examples/webpack/example.js': ['./examples/webpack/example.js']
       }
     },
-    webpack: {
-      demo: {
-
+    watch: {
+      js:  {
+        files: ['./angular.hammer.js'],
+        tasks: ['browserify:dev']
+      },
+      raw: {
+        files: ['./angular.hammer.js'],
+        tasks: ['browserify:dev']
       }
+    },
+    webpack: {
     }
   });
 
@@ -126,15 +120,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-webpack');
 
-  grunt.registerTask('default', ['uglify', 'jsdoc']);
-  grunt.registerTask('demo', ['copy', 'browserify', 'requirejs', 'webpack', 'nodemon']);
-  grunt.registerTask('demo-min', ['copy', 'browserify', 'requirejs', 'webpack', 'uglify', 'nodemon']);
+  grunt.registerTask('build', ['uglify:dist', 'jsdoc:dist']);
+  grunt.registerTask('default', ['copy', 'browserify', 'requirejs', 'webpack', 'concurrent']);
   grunt.registerTask('demo-browserify', ['browserify', 'nodemon']);
   grunt.registerTask('demo-browserify-min', ['browserify', 'uglify:browserify', 'nodemon']);
   grunt.registerTask('demo-raw', ['copy:raw', 'nodemon']);
-  grunt.registerTask('demo-raw-min', ['copy:raw', 'uglify:raw', 'nodemon']);
-  grunt.registerTask('demo-require', ['copy:requirejs', 'requirejs', 'nodemon']);
-  grunt.registerTask('demo-require-min', ['copy:requirejs', 'requirejs', 'uglify:requirejs', 'nodemon']);
-  grunt.registerTask('demo-webpack', ['copy:webpack', 'webpack', 'nodemon']);
-  grunt.registerTask('demo-webpack-min', ['copy:webpack', 'webpack', 'uglify:webpack', 'nodemon']);
+  grunt.registerTask('demo-raw-min', ['copy:rawmin', 'nodemon']);
 }
