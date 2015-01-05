@@ -1,0 +1,93 @@
+<!doctype html>
+<html ng-app="hmTime">
+  <head>
+    <style type="text/css">
+      html, body {
+        background-color: #d1c9b8;
+      }
+
+      .target {
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        color: white;
+        background-color: #444;
+        font-size: 36pt;
+        font-family: 'Futura', 'Avenir', 'Helvetica', sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>An example for each of the Pan-related gestures</h1>
+    <section ng-controller="hmCtrl">
+      <div class="target" hm-pan="onHammer">
+        <div>hmPan</div>
+        <div>{{model.pan.count}} ({{model.pan.time}})</div>
+      </div>
+      <div class="target" hm-panstart="onHammer">
+        <div>hmPanstart</div>
+        <div>{{model.panstart.count}} ({{model.panstart.time}})</div>
+      </div>
+      <div class="target" hm-panmove="onHammer">
+        <div>hmPanmove</div>
+        <div>{{model.panmove.count}} ({{model.panmove.time}})</div>
+      </div>
+      <div class="target" hm-panend="onHammer">
+        <div>hmPanend</div>
+        <div>{{model.panend.count}} ({{model.panend.time}})</div>
+      </div>
+      <div class="target" hm-pancancel="onHammer">
+        <div>hmPancancel</div>
+        <div>{{model.pancancel.count}} ({{model.pancancel.time}})</div>
+      </div>
+      <div class="target" hm-panleft="onHammer">
+        <div>hmPanleft</div>
+        <div>{{model.panleft.count}} ({{model.panleft.time}})</div>
+      </div>
+      <div class="target" hm-panright="onHammer">
+        <div>hmPanright</div>
+        <div>{{model.panright.count}} ({{model.panright.time}})</div>
+      </div>
+      <div class="target" hm-panup="onHammer">
+        <div>hmPanup</div>
+        <div>{{model.panup.count}} ({{model.panup.time}})</div>
+      </div>
+      <div class="target" hm-pandown="onHammer">
+        <div>hmPandown</div>
+        <div>{{model.pandown.count}} ({{model.pandown.time}})</div>
+      </div>
+    </section>
+    <div id="target"
+      ng-controller="hmCtrl"
+      hm-custom="onHammer"
+      hm-manager-options='{}'
+      hm-recognizer-options='[
+        {"type":"pan","event":"twoFingerPan","pointers":2,"directions":"DIRECTION_ALL"},
+        {"type":"tap","event":"dbltap","pointers":2,"taps":1}
+      ]'
+      >
+        {{eventType}}
+    </div>
+    <script type="text/javascript" src="./hammer.js"></script>
+    <script type="text/javascript" src="./angular.js"></script>
+    <script type="text/javascript" src="./angular.hammer.js"></script>
+    <script type="text/javascript">
+      angular.module('hmTime', ['hmTouchEvents'])
+        .controller('hmCtrl', ['$scope', function ($scope) {
+          $scope.model = {};
+
+          $scope.onHammer = function onHammer (event) {
+            if (!$scope.model[event.type]) {
+              $scope.model[event.type] = {
+                count: 0,
+                time: null
+              };
+            }
+
+            $scope.model[event.type].count += 1;
+            $scope.model[event.type].time = Date.now();
+          };
+        }]);
+    </script>
+  </body>
+</html>
