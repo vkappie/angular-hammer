@@ -71,7 +71,9 @@ module.exports = function (grunt) {
           mangle: true,
           preserveComments: require('uglify-save-license')
         },
-        './angular.hammer.min.js': ['./angular.hammer.js']
+        files: {
+          './angular.hammer.min.js': './angular.hammer.js'
+        }
       },
       browserify: {
         options: {
@@ -79,23 +81,9 @@ module.exports = function (grunt) {
           sourceMapName: './examples/browserify/example.min.js.map',
           mangle: true
         },
-        './examples/browserify/example.js': ['./examples/browserify/example.js']
-      },
-      requirejs: {
-        options: {
-          sourceMap: true,
-          sourceMapName: './examples/requirejs/example.min.js.map',
-          mangle: true
-        },
-        './examples/requirejs/example.js': ['./examples/requirejs/example.js']
-      },
-      webpack: {
-        options: {
-          sourceMap: true,
-          sourceMapName: './examples/webpack/example.min.js.map',
-          mangle: true
-        },
-        './examples/webpack/example.js': ['./examples/webpack/example.js']
+        files: {
+          './examples/browserify/example.js': ['./examples/browserify/example.js']
+        }
       }
     },
     watch: {
