@@ -284,6 +284,13 @@
     return recognizerOpts;
   }
 
+  /**
+   * Extracts the type of recognizer that should be instantiated from a given
+   * event name. Used only when no recognizer options are provided.
+   *
+   * @param  {String} eventName Name to derive the recognizer type from
+   * @return {string}           Type of recognizer that fires events with that name
+   */
   function getRecognizerTypeFromeventName (eventName) {
     if (eventName.indexOf('pan') > -1) {
       return 'pan';
