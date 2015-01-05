@@ -131,7 +131,7 @@
                 element.bind('click', handler);
               }
 
-              if (directiveName === 'hmDoubleTap') {
+              if (directiveName === 'hmDoubletap') {
                 element.bind('dblclick', handler);
               }
 
@@ -200,8 +200,8 @@
                 'type': getRecognizerTypeFromeventName(eventName)
               };
 
-              if (recognizerOpts.type.indexOf('doubletap') > -1) {
-                recognizerOpts.event = recognizerOpts.type;
+              if (directiveName === 'hmDoubletap') {
+                recognizerOpts.event = eventName;
                 recognizerOpts.taps = 2;
 
                 if (hammer.get('tap')) {
@@ -400,16 +400,13 @@
 
     var coordinates = [],
         threshold = 25,
-        timeout = 2500,
-        preventGhostsEnabled = false;
+        timeout = 2500;
 
     if ('ontouchstart' in window) {
-      element.addEventListener('touchstart', resetCoordinates, true);
-      element.addEventListener('touchend', registerCoordinates, true);
-
-      if (!preventGhostsEnabled) {
-        window.document.addEventListener('click', preventGhostClick, true);
-      }
+      element[0].addEventListener('touchstart', resetCoordinates, true);
+      element[0].addEventListener('touchend', registerCoordinates, true);
+      element[0].addEventListener('click', preventGhostClick, true);
+      element[0].addEventListener('tap', preventGhostClick, true);
     }
 
     /**
@@ -417,6 +414,9 @@
      * @param {MouseEvent} ev
      */
     function preventGhostClick (ev) {
+
+      console.log('Trying to prevent a ghost click', ev, Date.now());
+
       for (var i = 0; i < coordinates.length; i++) {
         var x = coordinates[i][0];
         var y = coordinates[i][1];
@@ -424,6 +424,7 @@
         // within the range, so prevent the click
         if (Math.abs(ev.clientX - x) < threshold &&
             Math.abs(ev.clientY - y) < threshold) {
+          console.log('Preventing a ghost click', Date.now());
           ev.stopPropagation();
           ev.preventDefault();
           break;
@@ -435,6 +436,7 @@
      * reset the coordinates array
      */
     function resetCoordinates () {
+      console.log('Resetting the touch coordinates', Date.now());
       coordinates = [];
     }
 
@@ -454,6 +456,9 @@
       // changed touches always contain the removed touches on a touchend
       // the touches object might contain these also at some browsers (firefox os)
       // so touches - changedTouches will be 0 or lower, like -1, on the final touchend
+
+      console.log('Registering touch coordinates', ev, Date.now());
+
       if(ev.touches.length - ev.changedTouches.length <= 0) {
         var touch = ev.changedTouches[0];
         coordinates.push([touch.clientX, touch.clientY]);

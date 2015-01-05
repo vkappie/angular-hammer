@@ -58,17 +58,6 @@
         <div>{{model.pandown.count}} ({{model.pandown.time}})</div>
       </div>
     </section>
-    <div id="target"
-      ng-controller="hmCtrl"
-      hm-custom="onHammer"
-      hm-manager-options='{}'
-      hm-recognizer-options='[
-        {"type":"pan","event":"twoFingerPan","pointers":2,"directions":"DIRECTION_ALL"},
-        {"type":"tap","event":"dbltap","pointers":2,"taps":1}
-      ]'
-      >
-        {{eventType}}
-    </div>
     <script type="text/javascript" src="./hammer.js"></script>
     <script type="text/javascript" src="./angular.js"></script>
     <script type="text/javascript" src="./angular.hammer.js"></script>

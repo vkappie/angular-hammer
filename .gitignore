@@ -7,3 +7,6 @@
 .idea/
 bower_components/
 node_modules/
+
+examples/**/angular*.js
+examples/**/hammer*.js
