@@ -111,12 +111,14 @@
                   var phase = scope.$root.$$phase,
                       fn = handlerExpr(scope);
 
-                  if (phase === '$apply' || phase === '$digest') {
-                    fn.call(scope, event);
-                  } else {
-                    scope.$apply(function() {
+                  if (fn) {
+                    if (phase === '$apply' || phase === '$digest') {
                       fn.call(scope, event);
-                    });
+                    } else {
+                      scope.$apply(function() {
+                        fn.call(scope, event);
+                      });
+                    }
                   }
                 },
                 managerOpts = angular.fromJson(attrs.hmManagerOptions),
