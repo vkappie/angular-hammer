@@ -106,18 +106,20 @@
             var handlerName = attrs[directiveName],
                 handlerExpr = $parse(handlerName),
                 handler = function (event) {
+                  var phase = scope.$root.$$phase;
                   event.element = element;
 
-                  var phase = scope.$root.$$phase,
-                      fn = handlerExpr(scope);
+                  if (phase === '$apply' || phase === '$digest') {
+                    callHandler();
+                  } else {
+                    scope.$apply(callHandler);
+                  }
 
-                  if (fn) {
-                    if (phase === '$apply' || phase === '$digest') {
+                  function callHandler () {
+                    var fn = handlerExpr(scope);
+
+                    if (fn) {
                       fn.call(scope, event);
-                    } else {
-                      scope.$apply(function() {
-                        fn.call(scope, event);
-                      });
                     }
                   }
                 },
