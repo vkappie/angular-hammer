@@ -59,6 +59,7 @@
     'hmPanup:panup',
     'hmPandown:pandown',
     'hmPress:press',
+    'hmPressup:pressup',
     'hmRotate:rotate',
     'hmRotatestart:rotatestart',
     'hmRotatemove:rotatemove',

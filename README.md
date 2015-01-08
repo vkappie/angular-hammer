@@ -1,4 +1,4 @@
-# Angular Hammer v2.1.5
+# Angular Hammer v2.1.7
 
 An [Angular.js](https://angularjs.org/) module that enables you to bind custom behavior to [Hammer.js](http://hammerjs.github.io/) touch events. It was derived from the [Angular Hammer](https://github.com/monospaced/angular-hammer) project by [Monospaced](https://github.com/monospaced).
 
@@ -51,6 +51,7 @@ The following list shows the Hammer event and corresponding Angular directive (f
     - pinchin : hmPinchin
     - pinchout : hmPinchout
 * press : hmPress
+    - pressup : HmPressup
 * rotate : hmRotate
     - rotatestart : hmRotatestart
     - rotatemove : hmRotatemove
