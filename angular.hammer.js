@@ -434,6 +434,7 @@
       element[0].addEventListener('touchstart', resetCoordinates, true);
       element[0].addEventListener('touchend', registerCoordinates, true);
       element[0].addEventListener('click', preventGhostClick, true);
+      element[0].addEventListener('mouseup', preventGhostClick, true);
     }
 
     /**
