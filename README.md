@@ -109,20 +109,20 @@ Recognizer options objects may have any of the properties listed in the table be
 * Some Hammer recognizers that accept a `direction` option. For these recognizers, use the `directions` option to specify which directions you would like to support. The value of this property should be a string of [`DIRECTION_*` values](http://hammerjs.github.io/api/#directions) separated by a `|` and containing no spaces. Angular Hammer will parse this field into the proper Hammer value, and set the `direction` option for the recognizer.
 * Defining options not supported by that recognizer type will have no effect on that recognizers behavior.
 
-| Option                | Type   | [Pan][1] | [Pinch][2] | [Press][3] | [Rotate][4] | [Swipe][5] | [Tap][6] |
-| :-------------------- | :----: | :------: | :--------: | :--------: | :---------: | :--------: | :------: |
-| `directions`          | String | &#10003; |            |            |             | &#10003;   |          |
-| `event`               | String | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
-| `interval`            | Number |          |            |            |             |            | &#10003; |
-| `pointers`            | Number | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
-| `posThreshold`        | Number |          |            |            |             |            | &#10003; |
-| `preventDefault` (AH) | Number | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
-| `preventGhosts` (AH)  | Number | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
-| `taps`                | Number |          |            |            |             |            | &#10003; |
-| `threshold`           | Number | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
-| `time`                | Number |          |            | &#10003;   |             |            | &#10003; |
-| `type` (AH)           | Number | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
-| `velocity`            | Number |          |            |            |             | &#10003;   |          |
+| Option                | Type    | [Pan][1] | [Pinch][2] | [Press][3] | [Rotate][4] | [Swipe][5] | [Tap][6] |
+| :-------------------- | :-----: | :------: | :--------: | :--------: | :---------: | :--------: | :------: |
+| `directions`          | String  | &#10003; |            |            |             | &#10003;   |          |
+| `event`               | String  | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
+| `interval`            | Number  |          |            |            |             |            | &#10003; |
+| `pointers`            | Number  | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
+| `posThreshold`        | Number  |          |            |            |             |            | &#10003; |
+| `preventDefault` (AH) | Boolean | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
+| `preventGhosts` (AH)  | Boolean | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
+| `taps`                | Number  |          |            |            |             |            | &#10003; |
+| `threshold`           | Number  | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
+| `time`                | Number  |          |            | &#10003;   |             |            | &#10003; |
+| `type` (AH)           | String  | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
+| `velocity`            | Number  |          |            |            |             | &#10003;   |          |
 
 [1]:http://hammerjs.github.io/recognizer-pan/ 
 [2]:http://hammerjs.github.io/recognizer-pinch/
