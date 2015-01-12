@@ -104,29 +104,6 @@
         return {
           'restrict' : 'A',
           'link' : function (scope, element, attrs) {
-            var handlerName = attrs[directiveName],
-                handlerExpr = $parse(handlerName),
-                handler = function (event) {
-                  var phase = scope.$root.$$phase;
-                  event.element = element;
-
-                  if (phase === '$apply' || phase === '$digest') {
-                    callHandler();
-                  } else {
-                    scope.$apply(callHandler);
-                  }
-
-                  function callHandler () {
-                    var fn = handlerExpr(scope);
-
-                    if (fn) {
-                      fn.call(scope, event);
-                    }
-                  }
-                },
-                managerOpts = angular.fromJson(attrs.hmManagerOptions),
-                recognizerOpts = angular.fromJson(attrs.hmRecognizerOptions),
-                hammer = element.data('hammer');
 
             // Check for Hammer and required functionality
             // If no Hammer, maybe bind tap and doubletap to click and dblclick
@@ -143,7 +120,13 @@
               return;
             }
 
-            // Hammer exists, check for a manager and set up the recognizers.
+            var hammer = element.data('hammer'),
+                managerOpts = angular.fromJson(attrs.hmManagerOptions),
+                recognizerOpts = angular.fromJson(attrs.hmRecognizerOptions);
+
+
+            // Check for a manager, make one if needed and destroy it when
+            // the scope is destroyed
 
             if (!hammer) {
               hammer = new Hammer.Manager(element[0], managerOpts);
@@ -152,6 +135,33 @@
                 hammer.destroy();
               });
             }
+
+            // Instantiate the handler
+
+            var handlerName = attrs[directiveName],
+                handlerExpr = $parse(handlerName),
+                handler = function (event) {
+                  var phase = scope.$root.$$phase;
+                  event.element = element;
+
+                  if (hammer.get(event.type).options.preventDefault) {
+                    event.preventDefault();
+                  }
+
+                  if (phase === '$apply' || phase === '$digest') {
+                    callHandler();
+                  } else {
+                    scope.$apply(callHandler);
+                  }
+
+                  function callHandler () {
+                    var fn = handlerExpr(scope);
+
+                    if (fn) {
+                      fn.call(scope, event);
+                    }
+                  }
+                };
 
             // Setting up the recognizers based on the supplied options
 
