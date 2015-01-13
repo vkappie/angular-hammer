@@ -141,10 +141,12 @@
             var handlerName = attrs[directiveName],
                 handlerExpr = $parse(handlerName),
                 handler = function (event) {
-                  var phase = scope.$root.$$phase;
+                  var phase = scope.$root.$$phase,
+                      recognizer = hammer.get(event.type);
+
                   event.element = element;
 
-                  if (hammer.get(event.type).options.preventDefault) {
+                  if (recognizer && recognizer.options.preventDefault) {
                     event.preventDefault();
                   }
 
