@@ -146,8 +146,14 @@
 
                   event.element = element;
 
-                  if (recognizer && recognizer.options.preventDefault) {
-                    event.preventDefault();
+                  if (recognizer) {
+                    if (recognizer.options.preventDefault) {
+                      event.preventDefault();
+                    }
+
+                    if (recognizer.options.stopPropagation) {
+                      event.srcEvent.stopPropagation();
+                    }
                   }
 
                   if (phase === '$apply' || phase === '$digest') {
@@ -157,7 +163,7 @@
                   }
 
                   function callHandler () {
-                    var fn = handlerExpr(scope);
+                    var fn = handlerExpr(scope, {'$event':event});
 
                     if (fn) {
                       fn.call(scope, event);
@@ -382,11 +388,11 @@
         addRecognizer(manager, {type:options.recognizeWith});
       }
 
-      recognizer.recognizeWith(options.recognizeWith);
+      recognizer.recognizeWith(manager.get(options.recognizeWith));
     }
 
-    if (options.dropRecognizeWith && hammer.get(options.dropRecognizeWith)) {
-      recognizer.dropRecognizeWith(options.dropRecognizeWith);
+    if (options.dropRecognizeWith && manager.get(options.dropRecognizeWith)) {
+      recognizer.dropRecognizeWith(manager.get(options.dropRecognizeWith));
     }
 
     if (options.requireFailure) {
@@ -394,11 +400,11 @@
         addRecognizer(manager, {type:options.requireFailure});
       }
 
-      recognizer.requireFailure(options.requireFailure);
+      recognizer.requireFailure(manager.get(options.requireFailure));
     }
 
-    if (options.dropRequireFailure && hammer.get(options.dropRequireFailure)) {
-      recognizer.dropRequireFailure(options.dropRequireFailure);
+    if (options.dropRequireFailure && manager.get(options.dropRequireFailure)) {
+      recognizer.dropRequireFailure(manager.get(options.dropRequireFailure));
     }
 
     if (options.preventGhosts && element) {
