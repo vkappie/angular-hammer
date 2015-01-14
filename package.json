@@ -1,6 +1,6 @@
 {
   "name": "angular-hammer",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "Hammer.js support for Angular.js applications",
   "main": "angular.hammer.js",
   "directories": {
