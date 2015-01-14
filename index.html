@@ -32,7 +32,7 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a id="angular-hammer-v218" class="anchor" href="#angular-hammer-v218" aria-hidden="true"><span class="octicon octicon-link"></span></a>Angular Hammer v2.1.8</h1>
+<a id="angular-hammer-v2110" class="anchor" href="#angular-hammer-v2110" aria-hidden="true"><span class="octicon octicon-link"></span></a>Angular Hammer v2.1.10</h1>
 
 <p>An <a href="https://angularjs.org/">Angular.js</a> module that enables you to bind custom behavior to <a href="http://hammerjs.github.io/">Hammer.js</a> touch events. It was derived from the <a href="https://github.com/monospaced/angular-hammer">Angular Hammer</a> project by <a href="https://github.com/monospaced">Monospaced</a>.</p>
 
@@ -161,6 +161,7 @@
 <li>If no type property is specified, those options will be applied to all of the recognizers associated with that element/manager. When you are defining recognizer options, it is best to define an options object with no type before defining those with types. </li>
 <li>The <code>event</code> property is stripped from recognizer options associated standard gestures as a safeguard. It can be used to define custom gestures (see below).</li>
 <li>Some Hammer recognizers that accept a <code>direction</code> option. For these recognizers, use the <code>directions</code> option to specify which directions you would like to support. The value of this property should be a string of <a href="http://hammerjs.github.io/api/#directions"><code>DIRECTION_*</code> values</a> separated by a <code>|</code> and containing no spaces. Angular Hammer will parse this field into the proper Hammer value, and set the <code>direction</code> option for the recognizer.</li>
+<li>Setting <a href="http://devdocs.io/dom/event.preventdefault"><code>preventDefault</code></a>, <code>preventGhosts</code>, or <a href="http://devdocs.io/dom/event.stoppropagation"><code>stopPropagation</code></a> will enable that behavior for all events recognized by that Recognizer, use this judiciously.</li>
 <li>Defining options not supported by that recognizer type will have no effect on that recognizers behavior.</li>
 </ul>
 
@@ -242,6 +243,17 @@
 <tr>
 <td align="left">
 <code>preventGhosts</code> (AH)</td>
+<td align="center">Boolean</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr>
+<td align="left">
+<code>stopPropagation</code> (AH)</td>
 <td align="center">Boolean</td>
 <td align="center">✓</td>
 <td align="center">✓</td>
