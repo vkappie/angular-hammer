@@ -14,7 +14,7 @@ module.exports = function (grunt) {
       }
     },
     concurrent: {
-      tasks: ['watch','nodemon'],
+      tasks: ['watch:raw','nodemon'],
       options: {
         logConcurrentOutput: true
       }
@@ -89,7 +89,7 @@ module.exports = function (grunt) {
     watch: {
       js:  {
         files: ['./angular.hammer.js'],
-        tasks: ['copy', 'browserify']
+        tasks: ['copy']
       },
       raw: {
         files: [
@@ -114,7 +114,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-webpack');
 
   grunt.registerTask('build', ['uglify:dist', 'jsdoc:dist']);
-  grunt.registerTask('default', ['copy', 'browserify', 'requirejs', 'webpack', 'concurrent']);
+  grunt.registerTask('default', ['copy', 'concurrent']);
   grunt.registerTask('demo-browserify', ['browserify', 'nodemon']);
   grunt.registerTask('demo-browserify-min', ['browserify', 'uglify:browserify', 'nodemon']);
   grunt.registerTask('demo-raw', ['copy:raw', 'nodemon']);

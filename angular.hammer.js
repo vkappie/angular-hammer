@@ -146,8 +146,14 @@
 
                   event.element = element;
 
-                  if (recognizer && recognizer.options.preventDefault) {
-                    event.preventDefault();
+                  if (recognizer) {
+                    if (recognizer.options.preventDefault) {
+                      event.preventDefault();
+                    }
+
+                    if (recognizer.options.stopPropagation) {
+                      event.srcEvent.stopPropagation();
+                    }
                   }
 
                   if (phase === '$apply' || phase === '$digest') {

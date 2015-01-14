@@ -65,6 +65,21 @@
         <div>{{model.click.count}} ({{model.click.time}})</div>
       </div>
     </section>
+    <section>
+      <h2>Recognizer-level stopPropagation</h2>
+      <div class="target" hm-tap="onHammer" hm-recognizer-options='{"stopPropagation":true}'>
+        <div>hmTap</div>
+        <div>{{model.tap.count}} ({{model.tap.time}})</div>
+        <div>ngClick</div>
+        <div>{{model.click.count}} ({{model.click.time}})</div>
+      </div>
+      <div class="target" hm-doubletap="onHammer" hm-recognizer-options='{"stopPropagation":true}'>
+        <div>hmDoubletap</div>
+        <div>{{model.doubletap.count}} ({{model.doubletap.time}})</div>
+        <div>ngClick</div>
+        <div>{{model.click.count}} ({{model.click.time}})</div>
+      </div>
+    </section>
     <script type="text/javascript" src="./hammer.js"></script>
     <script type="text/javascript" src="./angular.js"></script>
     <script type="text/javascript" src="./angular.hammer.js"></script>

@@ -9,6 +9,9 @@ bower_components/
 node_modules/
 npm-debug.log
 
-examples/**/angular*.js
-examples/**/hammer*.js
-examples/**/example*.js
+examples/raw/angular*
+examples/raw/hammer*
+
+examples/browserify/angular*
+examples/browserify/hammer*
+examples/browserify/example*
