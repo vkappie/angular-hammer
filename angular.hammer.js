@@ -163,7 +163,7 @@
                   }
 
                   function callHandler () {
-                    var fn = handlerExpr(scope);
+                    var fn = handlerExpr(scope, {'$event':event});
 
                     if (fn) {
                       fn.call(scope, event);
