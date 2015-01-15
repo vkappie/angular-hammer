@@ -281,27 +281,27 @@
    * add is determined by the value of the options.type property.
    *
    * @param {Object}  manager Hammer.js manager object assigned to an element
-   * @param {Object}  options Options that define the recognizer to add
-   * @return {Object} Reference to the new gesture recognizer, if successful,
-   *                  null otherwise.
+   * @param {String}  type    Options that define the recognizer to add
+   * @return {Object}         Reference to the new gesture recognizer, if
+   *                          successful, null otherwise.
    */
-  function addRecognizer (manager, options) {
-    if (!manager || !options || !options.type) { return null; }
+  function addRecognizer (manager, type) {
+    if (manager === undefined || type === undefined) { return null; }
 
     var recognizer;
 
-    if (options.type.indexOf('pan') > -1) {
-      recognizer = new Hammer.Pan(options);
-    } else if (options.type.indexOf('pinch') > -1) {
-      recognizer = new Hammer.Pinch(options);
-    } else if (options.type.indexOf('press') > -1) {
-      recognizer = new Hammer.Press(options);
-    } else if (options.type.indexOf('rotate') > -1) {
-      recognizer = new Hammer.Rotate(options);
-    } else if (options.type.indexOf('swipe') > -1) {
-      recognizer = new Hammer.Swipe(options);
+    if (type.indexOf('pan') > -1) {
+      recognizer = new Hammer.Pan();
+    } else if (type.indexOf('pinch') > -1) {
+      recognizer = new Hammer.Pinch();
+    } else if (type.indexOf('press') > -1) {
+      recognizer = new Hammer.Press();
+    } else if (type.indexOf('rotate') > -1) {
+      recognizer = new Hammer.Rotate();
+    } else if (type.indexOf('swipe') > -1) {
+      recognizer = new Hammer.Swipe();
     } else {
-      recognizer = new Hammer.Tap(options);
+      recognizer = new Hammer.Tap();
     }
 
     manager.add(recognizer);
@@ -356,12 +356,15 @@
    * @return None
    */
   function setupRecognizerWithOptions (manager, options, element) {
-    if (!manager || !options) { return; }
+    if (manager == null || options == null || options.type == null) {
+      return console.error('ERROR: Angular Hammer could not setup the' +
+        ' recognizer. Values of the passed manager and options: ', manager, options);
+    }
 
     var recognizer = manager.get(options.type);
 
     if (!recognizer) {
-      recognizer = addRecognizer(manager, options);
+      recognizer = addRecognizer(manager, options.type);
     }
 
     if (!options.directions) {
@@ -383,31 +386,41 @@
     options.direction = parseDirections(options.directions);
     recognizer.set(options);
 
-    if (options.recognizeWith) {
-      if (!manager.get(options.recognizeWith)){
-        addRecognizer(manager, {type:options.recognizeWith});
+    if (typeof options.recognizeWith === 'string') {
+      var recognizeWithRecognizer;
+
+      if (manager.get(options.recognizeWith) == null){
+        recognizeWithRecognizer = addRecognizer(manager, {type:options.recognizeWith});
       }
 
-      recognizer.recognizeWith(manager.get(options.recognizeWith));
+      if (recognizeWithRecognizer != null) {
+        recognizer.recognizeWith(recognizeWithRecognizer);
+      }
     }
 
-    if (options.dropRecognizeWith && manager.get(options.dropRecognizeWith)) {
+    if (typeof options.dropRecognizeWith  === 'string' &&
+        manager.get(options.dropRecognizeWith) != null) {
       recognizer.dropRecognizeWith(manager.get(options.dropRecognizeWith));
     }
 
-    if (options.requireFailure) {
-      if (!manager.get(options.requireFailure)){
-        addRecognizer(manager, {type:options.requireFailure});
+    if (typeof options.requireFailure  === 'string') {
+      var requireFailureRecognizer;
+
+      if (manager.get(options.requireFailure) == null){
+        requireFailureRecognizer = addRecognizer(manager, {type:options.requireFailure});
       }
 
-      recognizer.requireFailure(manager.get(options.requireFailure));
+      if (requireFailureRecognizer != null) {
+        recognizer.requireFailure(requireFailureRecognizer);
+      }
     }
 
-    if (options.dropRequireFailure && manager.get(options.dropRequireFailure)) {
+    if (typeof options.dropRequireFailure === 'string' &&
+        manager.get(options.dropRequireFailure) != null) {
       recognizer.dropRequireFailure(manager.get(options.dropRequireFailure));
     }
 
-    if (options.preventGhosts && element) {
+    if (options.preventGhosts === true && element != null) {
       preventGhosts(element);
     }
   }
