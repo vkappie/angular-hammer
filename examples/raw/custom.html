@@ -32,9 +32,9 @@
       >
         {{eventType}}
     </div>
-    <script type="text/javascript" src="../bower_components/hammerjs/hammer.js"></script>
-    <script type="text/javascript" src="../bower_components/angular/angular.js"></script>
-    <script type="text/javascript" src="../angular.hammer.js"></script>
+    <script type="text/javascript" src="./hammer.js"></script>
+    <script type="text/javascript" src="./angular.js"></script>
+    <script type="text/javascript" src="./angular.hammer.js"></script>
     <script type="text/javascript">
       /**
        * @ngInject
@@ -43,9 +43,7 @@
         .controller('hmCtrl', function ($scope) {
           $scope.eventType = "No events yet";
           $scope.onHammer = function onHammer (event) {
-            $scope.$apply(function () {
-              $scope.eventType = event.type;
-            });
+            $scope.eventType = event.type;
           };
         });
     </script>
