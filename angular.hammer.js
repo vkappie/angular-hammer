@@ -165,7 +165,7 @@
                   function callHandler () {
                     var fn = handlerExpr(scope, {'$event':event});
 
-                    if (fn) {
+                    if (typeof fn === 'function') {
                       fn.call(scope, event);
                     }
                   }
