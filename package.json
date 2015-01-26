@@ -53,8 +53,6 @@
     ]
   },
   "browser": {
-    "angular": "./node_modules/angular/angular.js",
-    "hammerjs": "./node_modules/hammerjs/hammer.js",
     "angular-hammer": "./angular.hammer.js"
   },
   "browserify-shim": {
