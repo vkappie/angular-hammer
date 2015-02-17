@@ -390,7 +390,7 @@
       var recognizeWithRecognizer;
 
       if (manager.get(options.recognizeWith) == null){
-        recognizeWithRecognizer = addRecognizer(manager, {type:options.recognizeWith});
+        recognizeWithRecognizer = addRecognizer(manager, options.recognizeWith);
       }
 
       if (recognizeWithRecognizer != null) {
