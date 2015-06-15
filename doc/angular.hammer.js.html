@@ -112,7 +112,140 @@
    * @requires angular
    * @requires hammer
    */
-  angular.module('hmTouchEvents', []);
+  var hmTouchEvents = angular.module('hmTouchEvents', []);
+
+  /**
+   * Provides a common interface for configuring global manager and recognizer
+   * options. Allows things like tap duration etc to be defaulted globally and
+   * overridden on a per-directive basis as needed.
+   *
+   * @return {Object} functions to add manager and recognizer options.
+   */
+  hmTouchEvents.provider(NAME, function(){
+
+    var self = this;
+    var defaultRecognizerOpts = false;
+    var recognizerOptsHash = {};
+    var managerOpts = {};
+
+    //
+    // Make use of presets from Hammer.defaults.preset array
+    // in angular-hammer events.
+    //
+    self.applyHammerPresets = function(){
+      //force hammer to extend presets with more info:
+      Hammer(document.createElement("i"));
+      var hammerPresets = Hammer.defaults.preset;
+
+      //add each preset to defaults list so long as there
+      //is associated config with it:
+      angular.forEach(hammerPresets, function(presetArr){
+
+        var data = presetArr[1];
+        if(!data) return;
+        var name = data.event;
+
+        //use event name given by hammer to set event type now:
+        data.type = name;
+
+        if(!name) throw Error(NAME+"Provider: useHammerPresets: preset event expected by now");
+        recognizerOptsHash[name] = data;
+
+      });
+    }
+
+    //
+    // Add a manager option (key/val to extend or object to set all):
+    //
+    self.addManagerOption = function(name, val){
+      if(typeof name == "object"){
+        angular.extend(managerOpts, name);
+      }
+      else {
+        managerOpts[name] = val;
+      }
+    }
+
+    //
+    // Add a recognizer option (key/val or object with "type" set):
+    //
+    self.addRecognizerOption = function(name, val){
+      if(Array.isArray(name)){
+        for(var i = 0; i &lt; name.length; i++) self.addRecognizerOption(name[i]);
+        return;
+      }
+      if(typeof name == "object") {
+        val = name;
+        name = val.type;
+      }
+      if(typeof val != "object") {
+        throw Error(NAME+"Provider: recognizer value expected to be object");
+      }
+      if(!name){
+        defaultRecognizerOpts = val;
+      } else {
+        recognizerOptsHash[val.type] = val;
+      }
+    }
+
+    // internal helper funcs:
+    function doRecognizerOptsExist(type, arr){
+      for(var i = 0; i &lt; arr.length; i++){
+        if(arr[i].type == type) return true;
+      }
+      return false;
+    }
+    function doDefaultRecognizerOptsExist(arr){
+      for(var i = 0; i &lt; arr.length; i++){
+        if(!arr[i].type) return true;
+      }
+      return false;
+    }
+
+    //provide an interface to this that the hm-* directives use
+    //to extend their recognizer/manager opts.
+    self.$get = function(){
+      return {
+        extendWithDefaultManagerOpts: function(opts){
+          if(typeof opts != "object"){
+            opts = {};
+          }
+          var out = {};
+          for(var name in managerOpts) {
+            if(!opts[name]) opts[name] = angular.copy(managerOpts[name]);
+          }
+          return angular.extend({}, managerOpts, opts);
+        },
+        extendWithDefaultRecognizerOpts: function(eventName, opts){
+
+          var eventType = getRecognizerTypeFromeventName(eventName);
+
+          //dont apply anything if this is custom event:
+          if(eventType == "custom") return opts;
+
+          var eventOpts = recognizerOptsHash[eventType];
+          var defaults = defaultRecognizerOpts;
+
+          //dont apply anything if nothing set to apply:
+          if(!eventOpts && !defaults) return opts;
+
+          //no opts, but either defaults or eventOpts to apply to extend:
+          if(!opts) return angular.extend({type:eventType}, defaults || {}, eventOpts || {});
+
+          //extend provided opts with settings obtained here:
+          if(!Array.isArray(opts)) opts = [opts];
+          opts = opts.map(function(opt){
+            if(!opt.type && defaults) return angular.extend({}, defaults, opt);
+            if(opt.type == eventType) return angular.extend({}, defaults, eventOpts, opt);
+          });
+
+          return opts;
+
+        }
+      };
+    };
+
+  });
 
   /**
    * Iterates through each gesture type mapping and creates a directive for
@@ -126,8 +259,7 @@
         directiveName = directive[0],
         eventName = directive[1];
 
-    angular.module('hmTouchEvents')
-      .directive(directiveName, ['$parse', '$window', function ($parse, $window) {
+    hmTouchEvents.directive(directiveName, ['$parse', '$window', hmTouchEvents, function ($parse, $window, defaultEvents) {
         return {
           'restrict' : 'A',
           'link' : function (scope, element, attrs) {
@@ -148,8 +280,8 @@
             }
 
             var hammer = element.data('hammer'),
-                managerOpts = angular.fromJson(attrs.hmManagerOptions),
-                recognizerOpts = angular.fromJson(attrs.hmRecognizerOptions);
+                managerOpts = defaultEvents.extendWithDefaultManagerOpts( scope.$eval(attrs.hmManagerOptions) ),
+                recognizerOpts = defaultEvents.extendWithDefaultRecognizerOpts( eventName, scope.$eval(attrs.hmRecognizerOptions) );
 
 
             // Check for a manager, make one if needed and destroy it when
@@ -192,14 +324,13 @@
                   function callHandler () {
                     var fn = handlerExpr(scope, {'$event':event});
 
-                    if (fn) {
+                    if (typeof fn === 'function') {
                       fn.call(scope, event);
                     }
                   }
                 };
 
             // Setting up the recognizers based on the supplied options
-
             if (angular.isArray(recognizerOpts)) {
               // The recognizer options may be stored in an array. In this
               // case, Angular Hammer iterates through the array of options
@@ -308,27 +439,27 @@
    * add is determined by the value of the options.type property.
    *
    * @param {Object}  manager Hammer.js manager object assigned to an element
-   * @param {Object}  options Options that define the recognizer to add
-   * @return {Object} Reference to the new gesture recognizer, if successful,
-   *                  null otherwise.
+   * @param {String}  type    Options that define the recognizer to add
+   * @return {Object}         Reference to the new gesture recognizer, if
+   *                          successful, null otherwise.
    */
-  function addRecognizer (manager, options) {
-    if (!manager || !options || !options.type) { return null; }
+  function addRecognizer (manager, type) {
+    if (manager === undefined || type === undefined) { return null; }
 
     var recognizer;
 
-    if (options.type.indexOf('pan') > -1) {
-      recognizer = new Hammer.Pan(options);
-    } else if (options.type.indexOf('pinch') > -1) {
-      recognizer = new Hammer.Pinch(options);
-    } else if (options.type.indexOf('press') > -1) {
-      recognizer = new Hammer.Press(options);
-    } else if (options.type.indexOf('rotate') > -1) {
-      recognizer = new Hammer.Rotate(options);
-    } else if (options.type.indexOf('swipe') > -1) {
-      recognizer = new Hammer.Swipe(options);
+    if (type.indexOf('pan') > -1) {
+      recognizer = new Hammer.Pan();
+    } else if (type.indexOf('pinch') > -1) {
+      recognizer = new Hammer.Pinch();
+    } else if (type.indexOf('press') > -1) {
+      recognizer = new Hammer.Press();
+    } else if (type.indexOf('rotate') > -1) {
+      recognizer = new Hammer.Rotate();
+    } else if (type.indexOf('swipe') > -1) {
+      recognizer = new Hammer.Swipe();
     } else {
-      recognizer = new Hammer.Tap(options);
+      recognizer = new Hammer.Tap();
     }
 
     manager.add(recognizer);
@@ -383,12 +514,15 @@
    * @return None
    */
   function setupRecognizerWithOptions (manager, options, element) {
-    if (!manager || !options) { return; }
+    if (manager == null || options == null || options.type == null) {
+      return console.error('ERROR: Angular Hammer could not setup the' +
+        ' recognizer. Values of the passed manager and options: ', manager, options);
+    }
 
     var recognizer = manager.get(options.type);
 
     if (!recognizer) {
-      recognizer = addRecognizer(manager, options);
+      recognizer = addRecognizer(manager, options.type);
     }
 
     if (!options.directions) {
@@ -410,31 +544,41 @@
     options.direction = parseDirections(options.directions);
     recognizer.set(options);
 
-    if (options.recognizeWith) {
-      if (!manager.get(options.recognizeWith)){
-        addRecognizer(manager, {type:options.recognizeWith});
+    if (typeof options.recognizeWith === 'string') {
+      var recognizeWithRecognizer;
+
+      if (manager.get(options.recognizeWith) == null){
+        recognizeWithRecognizer = addRecognizer(manager, options.recognizeWith);
       }
 
-      recognizer.recognizeWith(manager.get(options.recognizeWith));
+      if (recognizeWithRecognizer != null) {
+        recognizer.recognizeWith(recognizeWithRecognizer);
+      }
     }
 
-    if (options.dropRecognizeWith && manager.get(options.dropRecognizeWith)) {
+    if (typeof options.dropRecognizeWith  === 'string' &&
+        manager.get(options.dropRecognizeWith) != null) {
       recognizer.dropRecognizeWith(manager.get(options.dropRecognizeWith));
     }
 
-    if (options.requireFailure) {
-      if (!manager.get(options.requireFailure)){
-        addRecognizer(manager, {type:options.requireFailure});
+    if (typeof options.requireFailure  === 'string') {
+      var requireFailureRecognizer;
+
+      if (manager.get(options.requireFailure) == null){
+        requireFailureRecognizer = addRecognizer(manager, {type:options.requireFailure});
       }
 
-      recognizer.requireFailure(manager.get(options.requireFailure));
+      if (requireFailureRecognizer != null) {
+        recognizer.requireFailure(requireFailureRecognizer);
+      }
     }
 
-    if (options.dropRequireFailure && manager.get(options.dropRequireFailure)) {
+    if (typeof options.dropRequireFailure === 'string' &&
+        manager.get(options.dropRequireFailure) != null) {
       recognizer.dropRequireFailure(manager.get(options.dropRequireFailure));
     }
 
-    if (options.preventGhosts && element) {
+    if (options.preventGhosts === true && element != null) {
       preventGhosts(element);
     }
   }
@@ -550,7 +694,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 14 2015 15:21:01 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jun 15 2015 15:00:39 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
