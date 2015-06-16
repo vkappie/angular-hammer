@@ -1,7 +1,10 @@
 // ---- Angular Hammer ----
 
-// Copyright (c) 2014 Ryan S Mullins <ryan@ryanmullins.org>
+// Copyright (c) 2015 Ryan S Mullins <ryan@ryanmullins.org>
 // Licensed under the MIT Software License
+//
+// modifications by James Wilson <me@unbui.lt>
+//
 
 (function (window, angular, Hammer) {
   'use strict';

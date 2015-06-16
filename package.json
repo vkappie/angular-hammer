@@ -1,6 +1,6 @@
 {
   "name": "angular-hammer",
-  "version": "2.1.10",
+  "version": "2.1.10-jsdw",
   "description": "Hammer.js support for Angular.js applications",
   "main": "angular.hammer.js",
   "directories": {
@@ -20,10 +20,10 @@
     "touch",
     "gesture"
   ],
-  "author": "Ryan S Mullins",
+  "author": "Ryan S Mullins & James Wilson",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/RyanMullins/angular-hammer/issues"
+    "url": "https://github.com/jsdw/angular-hammer/issues"
   },
   "homepage": "http://ryanmullins.github.io/angular-hammer/",
   "devDependencies": {

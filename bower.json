@@ -1,10 +1,11 @@
 {
   "name": "AngularHammer",
-  "version": "2.1.10",
+  "version": "2.1.10-jsdw",
   "authors": [
-    "Ryan S Mullins <ryan@ryanmullins.org>"
+    "Ryan S Mullins <ryan@ryanmullins.org>",
+    "James Wilson <me@unbui.lt>"
   ],
-  "homepage": "https://github.com/RyanMullins/angular-hammer",
+  "homepage": "https://github.com/jsdw/angular-hammer",
   "main": "angular.hammer.js",
   "license": "MIT",
   "keywords": [
