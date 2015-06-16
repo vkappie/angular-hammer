@@ -339,7 +339,7 @@
               //not a custom directive, so apply the defaults
               //depending on the directive we're using.
               //(to make things like double tap work)
-              if(thisRecognizer === 'custom'){
+              if(thisRecognizer !== 'custom'){
 
                 if (directiveName === 'hmDoubletap') {
                   options.event = eventName;
