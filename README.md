@@ -1,6 +1,8 @@
-# Angular Hammer v2.1.10
+# Angular Hammer v3.0-jsdw
 
-An [Angular.js](https://angularjs.org/) module that enables you to bind custom behavior to [Hammer.js](http://hammerjs.github.io/) touch events. It was derived from the [Angular Hammer](https://github.com/monospaced/angular-hammer) project by [Monospaced](https://github.com/monospaced).
+An [Angular.js](https://angularjs.org/) module that enables you to bind custom behavior to [Hammer.js](http://hammerjs.github.io/) touch events. It is a heavily modified version of Ryan Mullins' [angular-hammer](https://github.com/RyanMullins/angular-hammer) module, which itself was derived from the [Angular Hammer](https://github.com/monospaced/angular-hammer) project by [Monospaced](https://github.com/monospaced).
+
+Tweaks from Ryan Mullins version include an additional directive to allow setting of global presets and importing of global presets from `Hammer.defaults.presets`, and other general tidyup.
 
 ## Installation 
 
