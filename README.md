@@ -94,7 +94,7 @@ Possible Properties:
 Example Definition: 
 
 ```html
-<div hm-tap="onHammer" hm-manager-options='{"enabled":true,"preventGhosts":true}'></div>
+<div hm-tap="onHammer" hm-manager-options='{"enable":true,"preventGhosts":true}'></div>
 ```
 
 ### Recognizer Options
