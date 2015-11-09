@@ -2,7 +2,7 @@
   "name": "angular-hammer",
   "version": "2.2.0",
   "description": "Hammer.js support for Angular.js applications",
-  "main": "angular.hammer.js",
+  "main": "index.js",
   "directories": {
     "example": "examples"
   },

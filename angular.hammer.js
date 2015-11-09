@@ -6,16 +6,16 @@
 // (fairly heavy) modifications by James Wilson <me@unbui.lt>
 //
 
-(function (window, angular, Hammer) {
+(function (angular, Hammer) {
   'use strict';
 
   // Checking to make sure Hammer and Angular are defined
 
   if (typeof angular === 'undefined') {
-    throw Error("angular-hammer: AngularJS (window.angular) is undefined but is necessary.");
+    throw Error("angular-hammer: AngularJS (angular) is undefined but is necessary.");
   }
   if (typeof Hammer === 'undefined') {
-    throw Error("angular-hammer: HammerJS (window.Hammer) is undefined but is necessary.");
+    throw Error("angular-hammer: HammerJS (Hammer) is undefined but is necessary.");
   }
 
   /**
@@ -598,4 +598,4 @@
       }
     }
   }
-})(window, window.angular, window.Hammer);
+})(angular, Hammer);
