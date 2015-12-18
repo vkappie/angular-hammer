@@ -299,19 +299,29 @@
             var handler = function (event) {
                   event.element = element;
 
-                  var recognizer = hammer.get(event.type);
+                  // Default invokeApply to true, overridden by recognizer option
+                  var invokeApply = true;
+
+                  var recognizer = hammer.get(getRecognizerTypeFromeventName(event.type));
                   if (recognizer) {
-                    if (recognizer.options.preventDefault) {
+                    var opts = recognizer.options;
+                    if (opts.preventDefault) {
                       event.preventDefault();
                     }
-                    if (recognizer.options.stopPropagation) {
+                    if (opts.stopPropagation) {
                       event.srcEvent.stopPropagation();
                     }
+
+                    invokeApply = angular.isUndefined(opts.invokeApply) || opts.invokeApply;
                   }
 
-                  scope.$apply(function(){
+                  if (invokeApply) {
+                    scope.$apply(function(){
+                      handlerExpr({ '$event': event });
+                    });
+                  } else {
                     handlerExpr({ '$event': event });
-                  });
+                  }
                 };
 
             // The recognizer options are normalized to an array. This array
