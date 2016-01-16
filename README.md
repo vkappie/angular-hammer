@@ -110,6 +110,7 @@ Recognizer options objects may have any of the properties listed in the table be
 * The `event` property is stripped from recognizer options associated standard gestures as a safeguard. It can be used to define custom gestures (see below).
 * Some Hammer recognizers that accept a `direction` option. For these recognizers, use the `directions` option to specify which directions you would like to support. The value of this property should be a string of [`DIRECTION_*` values](http://hammerjs.github.io/api/#directions) separated by a `|` and containing no spaces. Angular Hammer will parse this field into the proper Hammer value, and set the `direction` option for the recognizer.
 * Setting [`preventDefault`](http://devdocs.io/dom/event.preventdefault), `preventGhosts`, or [`stopPropagation`](http://devdocs.io/dom/event.stoppropagation) will enable that behavior for all events recognized by that Recognizer, use this judiciously.
+* By default, event callbacks are run inside `scope.$apply()`. Set `invokeApply: false` to disable this behavior, just like for `$timeout`. This is useful for high-frequency events like `panmove`.
 * Defining options not supported by that recognizer type will have no effect on that recognizers behavior.
 
 | Option                  | Type    | [Pan][1] | [Pinch][2] | [Press][3] | [Rotate][4] | [Swipe][5] | [Tap][6] |
@@ -117,6 +118,7 @@ Recognizer options objects may have any of the properties listed in the table be
 | `directions`            | String  | &#10003; |            |            |             | &#10003;   |          |
 | `event`                 | String  | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
 | `interval`              | Number  |          |            |            |             |            | &#10003; |
+| `invokeApply` (AH)  | Boolean | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
 | `pointers`              | Number  | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
 | `posThreshold`          | Number  |          |            |            |             |            | &#10003; |
 | `preventDefault` (AH)   | Boolean | &#10003; | &#10003;   | &#10003;   | &#10003;    | &#10003;   | &#10003; |
