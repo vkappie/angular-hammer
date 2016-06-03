@@ -20,7 +20,11 @@
     "touch",
     "gesture"
   ],
-  "author": "Ryan S Mullins & James Wilson",
+  "author": "Ryan S Mullins",
+  "contributors": [
+    "James Wilson",
+    "Alexander Pinnecke"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jsdw/angular-hammer/issues"
